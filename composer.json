@@ -1,0 +1,12 @@
+{
+  "require": {
+    "ezyang/htmlpurifier": "^4.11",
+    "jkingweb/druuid": "3.0.0",
+    "tecnick.com/tcpdf": "6.2.26",
+    "ext-json": "*",
+    "ext-apache": "*",
+    "ext-bcmath": "*",
+    "ext-readline": "*",
+    "ext-openssl": "*"
+  }
+}
