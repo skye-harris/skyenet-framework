@@ -98,7 +98,7 @@
 		 * @throws Exception
 		 */
 		protected function loadConfig(): void {
-			$configFile = __DIR__.'/../../../config.json';
+			$configFile = __DIR__ . '/../../../config.json';
 			//$configFile = __DIR__ . '/../../config.json';
 
 			if (!file_exists($configFile))

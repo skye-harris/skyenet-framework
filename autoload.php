@@ -7,7 +7,7 @@
 	 */
 
 	define('SKYENET_INCLUDES', [
-		__DIR__ . '/..',
+		__DIR__ . '/Skyenet Framework',
 		__DIR__ . '/lib',
 	]);
 
