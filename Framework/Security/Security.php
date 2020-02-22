@@ -3,7 +3,6 @@
 	namespace Skyenet\Security;
 
 	use JKingWeb\DrUUID\UUID;
-	use Skyenet\Constants;
 	use Skyenet\ManagedData;
 	use Skyenet\Skyenet;
 

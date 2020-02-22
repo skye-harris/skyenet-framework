@@ -18,7 +18,7 @@
 		public int $affected_rows = 0;
 		public int $insert_id = 0;
 
-		private int $_num_rows = 0;
+		private int $_num_rows;
 		private int $rowIndex = 0;
 
 		private array $fieldNames = [];

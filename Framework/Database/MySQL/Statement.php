@@ -19,21 +19,15 @@
 		private $statement;
 
 		/**
-		 * @var mysqli $sqlConnection
-		 */
-		private $sqlConnection;
-
-		/**
 		 * @param Mysqli $sqlConnection
 		 * @param string $query
 		 * @throws QueryException
 		 */
 		public function __construct(mysqli $sqlConnection, string $query) {
-			$this->sqlConnection = $sqlConnection;
-			$this->statement = $this->sqlConnection->prepare($query);
+			$this->statement = $sqlConnection->prepare($query);
 
 			if ($this->statement === FALSE) {
-				throw new QueryException("SQL Statement failed to compile: '{$query}', {$this->sqlConnection->error}");
+				throw new QueryException("SQL Statement failed to compile: '{$query}', {$sqlConnection->error}");
 			}
 		}
 

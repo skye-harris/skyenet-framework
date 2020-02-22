@@ -9,7 +9,6 @@
 	namespace Skyenet\Model;
 
 	use Countable;
-	use Model\Crescent\User\User;
 	use SeekableIterator;
 	use Skyenet\Cache\ModelCache;
 	use Skyenet\Database\MySQL\QueryException;
@@ -109,8 +108,9 @@
 		 * @since 5.0.0
 		 */
 		public function rewind(): void {
-			if (!$this->sqlResult)
+			if (!$this->sqlResult) {
 				return;
+			}
 
 			if ($this->currentIndex !== 0) {
 				$this->seek(0);
@@ -143,7 +143,7 @@
 					/** @var Model $result */
 					$result = new $this->parentClass($this->currentRow);
 				}
-			} catch (LoadException $e) {
+			} /** @noinspection PhpRedundantCatchClauseInspection */ catch (LoadException $e) {
 				// the iterator is to return null upon failure (no more results), not throw an exception
 			}
 

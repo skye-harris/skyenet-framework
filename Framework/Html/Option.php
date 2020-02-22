@@ -10,5 +10,5 @@
 
 
 	class Option extends HtmlTag {
-		protected $tagName = 'option';
+		protected string $tagName = 'option';
 	}

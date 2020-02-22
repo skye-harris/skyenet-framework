@@ -54,7 +54,7 @@
 		}
 
 		public function toJSON(): string {
-			return json_encode($this->data);
+			return json_encode($this->data, JSON_THROW_ON_ERROR, 512);
 		}
 
 		public function htmlSafe(): string {
@@ -106,13 +106,11 @@
 		}
 
 		public function __debugInfo(): array {
-			$output = [
+			return [
 				'BOOL' => $this->boolValue() ? 'TRUE' : 'FALSE',
 				'HTML' => $this->htmlSafe(),
 				'RAW' => $this->data,
 			];
-
-			return $output;
 		}
 
 		/**

@@ -9,5 +9,5 @@
 	namespace Skyenet\Html;
 
 	class Button extends HtmlTag {
-		protected $tagName = 'button';
+		protected string $tagName = 'button';
 	}

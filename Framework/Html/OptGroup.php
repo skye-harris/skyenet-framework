@@ -10,5 +10,5 @@
 
 
 	class OptGroup extends HtmlTag {
-		protected $tagName = 'optgroup';
+		protected string $tagName = 'optgroup';
 	}

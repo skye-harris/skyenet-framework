@@ -12,13 +12,13 @@
 	 */
 
 	class HtmlTag {
-		protected $tagName = 'html';
+		protected string $tagName = 'html';
 		protected $requiresClosingTag = true;
 		protected $attributes = [];
 		protected $classes = [];
 		protected $children = [];
 
-		protected $innerHTML = null;
+		protected $innerHTML;
 
 		public function __construct() {
 		}

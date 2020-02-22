@@ -70,7 +70,7 @@
 						}
 
 						echo $view->buildOutput([
-							'Title' => Skyenet::$CONFIG['SITE_TITLE'],
+							'Title' => self::$CONFIG['SITE_TITLE'],
 							'ExceptionClass' => '\\' . get_class($ex),
 							'ExceptionMessage' => $ex->getMessage(),
 							'PreviousExceptionMessage' => $ex->getPrevious() ? $ex->getPrevious()
@@ -103,13 +103,15 @@
 		protected function loadConfig(): void {
 			$configFile = "{$this->rootPath()}/config.json";
 
-			if (!file_exists($configFile))
+			if (!file_exists($configFile)) {
 				throw new Exception('config.json does not exist');
+			}
 
 			$config = json_decode(file_get_contents($configFile), true, 512, JSON_THROW_ON_ERROR);
 
-			if (!is_array($config))
+			if (!is_array($config)) {
 				throw new Exception('Failed to decode config.json to an associative array');
+			}
 
 			static::$CONFIG = array_merge(static::$CONFIG, $config);
 		}
@@ -155,8 +157,9 @@
 			$self = $this;
 
 			spl_autoload_register(static function (string $class) use ($self) {
-				if ($class[0] === '/')
+				if ($class[0] === '/') {
 					$class = substr($class, 1);
+				}
 
 				$namespaces = ['Console','App'];
 

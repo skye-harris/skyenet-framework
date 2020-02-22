@@ -31,11 +31,13 @@
 				$column->name = $tableRow['Field'];
 				$column->default = $tableRow['Default'];
 
-				if ($tableRow['Key'] === 'PRI')
+				if ($tableRow['Key'] === 'PRI') {
 					$column->flags |= Column::FLAG_PRI_KEY;
+				}
 
-				if ($tableRow['Null'] === 'NO')
+				if ($tableRow['Null'] === 'NO') {
 					$column->flags |= Column::FLAG_NOT_NULL;
+				}
 
 				if (!preg_match('/^([a-z]*)(\((\d+(,\d+)?)\))?(.*)?$/i', strtoupper($tableRow['Type']), $matches)) {
 					throw new Exception("Failed to determine column type: Column '{$column->name}' with type '{$tableRow['Type']}'");
@@ -47,8 +49,9 @@
 
 				$type = Column::MAP_NAMES_TO_TYPES[$typeName] ?? null;
 
-				if (!$type)
+				if (!$type) {
 					throw new Exception("Failed to determine column type: Column '{$column->name}' with type '{$typeName}'");
+				}
 
 				$column->type = $type;
 				$column->size = $typeSize;
@@ -68,7 +71,7 @@
 			return $table;
 		}
 
-		public function setTableName(string $tableName) {
+		public function setTableName(string $tableName): void {
 			$this->tableName = $tableName;
 		}
 
@@ -97,7 +100,7 @@
 			return $this;
 		}
 
-		protected  function addColumnDef(Column $column) {
+		protected  function addColumnDef(Column $column): void {
 			$this->columnDefs[] = $column;
 		}
 
@@ -188,8 +191,9 @@
 						$val = "DEFAULT '{$columnDef->default}'";
 					}
 
-					if ($val)
+					if ($val) {
 						$columnArr[] = $val;
+					}
 				}
 
 				$columns[] = implode(' ', array_filter($columnArr));

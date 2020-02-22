@@ -9,7 +9,7 @@
 	namespace Skyenet\Html;
 
 	class Input extends HtmlTag {
-		protected $tagName = 'input';
+		protected string $tagName = 'input';
 		protected $requiresClosingTag = false;
 
 		/**

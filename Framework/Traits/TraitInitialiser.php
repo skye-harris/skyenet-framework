@@ -9,6 +9,7 @@
 	namespace Skyenet\Traits;
 
 	use ReflectionClass;
+	use ReflectionException;
 
 	trait TraitInitialiser {
 		protected function getShortClassName(String $fullyQualifiedClassName): string {
@@ -20,8 +21,9 @@
 			foreach ($classTraits AS $classTrait) {
 				$initMethod = lcfirst($this->getShortClassName($classTrait->name));
 
-				if ($classTrait->hasMethod($initMethod) && !in_array($initMethod, $resultArray, true))
+				if ($classTrait->hasMethod($initMethod) && !in_array($initMethod, $resultArray, true)) {
 					$resultArray[] = $initMethod;
+				}
 
 				$this->discoverTraitInitialisers($classTrait, $resultArray);
 			}
@@ -41,7 +43,7 @@
 				foreach ($discoveredTraits AS $discoveredTrait => $initFunc) {
 					$this->$initFunc();
 				}
-			} catch (\ReflectionException $exception) {
+			} catch (ReflectionException $exception) {
 
 			}
 		}

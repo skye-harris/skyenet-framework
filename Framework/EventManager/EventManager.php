@@ -33,8 +33,9 @@
 			foreach (self::$eventListeners AS $listenerArray) {
 				[$listener, $events] = $listenerArray;
 
-				if (!in_array($event->name, $events, true))
+				if (!in_array($event->name, $events, true)) {
 					continue;
+				}
 
 				/* @var $listener EventListener */
 				$listener->onReceiveEvent($event);

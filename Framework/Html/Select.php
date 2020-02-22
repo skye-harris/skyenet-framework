@@ -10,5 +10,5 @@
 
 
 	class Select extends HtmlTag {
-		protected $tagName = 'select';
+		protected string $tagName = 'select';
 	}

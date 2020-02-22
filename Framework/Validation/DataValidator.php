@@ -2,6 +2,7 @@
 
 	namespace Skyenet\Validation;
 
+	use JsonException;
 	use Skyenet\Skyenet;
 
 	class DataValidator {
@@ -19,10 +20,14 @@
 		 */
 		public function jsonArray(?string $customErrorMessage = null): ArrayDataValidator {
 			if ($this->rawValue !== null) {
-				$json = json_decode($this->rawValue, false);
+				try {
+					$json = json_decode($this->rawValue, false, 512, JSON_THROW_ON_ERROR);
 
-				if ($json === null || !is_array($json)) {
-					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON array");
+					if ($json === null || !is_array($json)) {
+						throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON array");
+					}
+				} catch (JsonException $exception) {
+					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON array", 0, $exception);
 				}
 
 				$this->rawValue = $json;
@@ -38,9 +43,14 @@
 		 */
 		public function jsonObject(?string $customErrorMessage = null): ObjectDataValidator {
 			if ($this->rawValue !== null) {
-				$json = json_decode($this->rawValue, false);
-				if ($json === null || !is_object($json)) {
-					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON object");
+				try {
+					$json = json_decode($this->rawValue, false, 512, JSON_THROW_ON_ERROR);
+
+					if ($json === null || !is_object($json)) {
+						throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON object");
+					}
+				} catch (JsonException $exception) {
+					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON object", 0, $exception);
 				}
 
 				$this->rawValue = $json;
@@ -209,21 +219,7 @@
 		 * @throws Exception
 		 */
 		public static function GET(String $indexName, bool $nullable = false, ?String $friendlyDesc = null): self {
-			$varName = $friendlyDesc ?? $indexName;
-
-			if (!$nullable && !isset($_GET[$indexName])) {
-				throw new Exception(null, "Value for {$varName} was not found");
-			}
-
-			$value = $_GET[$indexName] ?? null;
-			if ($value === null && !$nullable) {
-				throw new Exception(null, "{$varName} cannot be null");
-			}
-
-			$dataValidation = new self($value);
-			$dataValidation->varName = $varName;
-
-			return $dataValidation;
+			return static::KeyFromArray($_GET, $indexName, $nullable, $friendlyDesc);
 		}
 
 		/**
@@ -234,21 +230,7 @@
 		 * @throws Exception
 		 */
 		public static function POST(String $indexName, bool $nullable = false, ?String $friendlyDesc = null): self {
-			$varName = $friendlyDesc ?? $indexName;
-
-			if (!$nullable && !isset($_POST[$indexName])) {
-				throw new Exception(null, "Value for {$varName} was not found");
-			}
-
-			$value = $_POST[$indexName] ?? null;
-			if ($value === null && !$nullable) {
-				throw new Exception(null, "{$varName} cannot be null");
-			}
-
-			$dataValidation = new self($value);
-			$dataValidation->varName = $varName;
-
-			return $dataValidation;
+			return static::KeyFromArray($_POST, $indexName, $nullable, $friendlyDesc);
 		}
 
 		/**
@@ -259,6 +241,18 @@
 		 * @throws Exception
 		 */
 		public static function REQUEST(String $indexName, bool $nullable = false, ?String $friendlyDesc = null): self {
+			return static::KeyFromArray($_REQUEST, $indexName, $nullable, $friendlyDesc);
+		}
+
+		/**
+		 * @param array       $array
+		 * @param String      $indexName
+		 * @param bool        $nullable
+		 * @param String|null $friendlyDesc
+		 * @return static
+		 * @throws Exception
+		 */
+		protected static function KeyFromArray(array $array, String $indexName, bool $nullable = false, ?String $friendlyDesc = null): self {
 			$varName = $friendlyDesc ?? $indexName;
 
 			if (!$nullable && !isset($_REQUEST[$indexName])) {

@@ -3,6 +3,7 @@
 
 	use Skyenet\ManagedData;
 	use Skyenet\Model\Model;
+	use WeakReference;
 
 	/**
 	 * Created by PhpStorm.
@@ -15,7 +16,7 @@
 		protected static array $_weakReferenceCache = [];
 
 		public static function Cache(Model $model): void {
-			static::$_weakReferenceCache[$model->getUuid(true)] = \WeakReference::create($model);
+			static::$_weakReferenceCache[$model->getUuid(true)] = WeakReference::create($model);
 		}
 
 		/**

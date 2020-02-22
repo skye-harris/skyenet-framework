@@ -9,7 +9,7 @@
 	namespace Skyenet\Html;
 
 	class TextArea extends Input {
-		protected $tagName = 'textarea';
+		protected string $tagName = 'textarea';
 		protected $requiresClosingTag = true;
 
 		public function setRows(int $rows): self {

@@ -2,6 +2,7 @@
 
 	namespace Skyenet\Model;
 
+	use JsonSerializable;
 	use ReflectionClass;
 	use Skyenet\Cache\ModelCache;
 	use Skyenet\Database\MySQL\ConnectException;
@@ -21,7 +22,7 @@
 	 * Date: 13/05/2017
 	 * Time: 4:37 PM
 	 */
-	abstract class Model implements \JsonSerializable, UrlLoadable {
+	abstract class Model implements JsonSerializable, UrlLoadable {
 		protected array $_variableMap = [];
 		protected array $_dirtyVars = [];
 
@@ -265,8 +266,9 @@
 							   ->execute();
 
 					// Insert our model into the weak-reference cache
-					if ($this->_isNew)
+					if ($this->_isNew) {
 						$this->cacheSelf();
+					}
 
 					$this->_isNew = false;
 
@@ -374,8 +376,9 @@
 
 				$class = $class->getParentClass();
 
-				if (!$includeParentalEvents || !$class)
+				if (!$includeParentalEvents || !$class) {
 					break;
+				}
 			}
 
 			return $eventArray;
