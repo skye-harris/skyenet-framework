@@ -22,7 +22,6 @@
 	 * Time: 4:37 PM
 	 */
 	abstract class Model implements \JsonSerializable, UrlLoadable {
-		protected array $_variableKeys = [];
 		protected array $_variableMap = [];
 		protected array $_dirtyVars = [];
 
@@ -62,7 +61,7 @@
 
 		public function __construct(?array $assocArray = null) {
 			$this->_uuid = $assocArray['uuid'] ?? Security::UUID(false);
-			$this->_variableKeys = $this->_dirtyVars = array_keys($this->_variableMap);
+			$this->_dirtyVars = array_keys($this->_variableMap);
 
 			if ($assocArray) {
 				$this->initialise($assocArray);
@@ -89,9 +88,7 @@
 				[$relatedClass, $relationKey] = $oneToMany;
 
 				/** @var Model $relatedClass */
-				$iterator = $this->_toManyCache[$name] ??= $relatedClass::LoadEx("{$relationKey}=UNHEX(?)", [$this->_uuid]);
-
-				return $iterator;
+				return $this->_toManyCache[$name] ??= $relatedClass::LoadEx("{$relationKey}=UNHEX(?)", [$this->_uuid]);
 			}
 
 			throw new Exception("No method to invoke with name '{$name}'");
@@ -121,7 +118,7 @@
 			}
 
 			// Is this key a part of our model?
-			if (!in_array($name, $this->_variableKeys, true)) {
+			if (!array_key_exists($name, $this->_variableMap)) {
 				$myClass = static::class;
 
 				throw new SaveException("Object '{$myClass}' has no property named '{$name}'");
