@@ -23,12 +23,10 @@
 		 * @throws Exception
 		 */
 		public function __construct(string $viewFileName) {
-			foreach (SKYENET_INCLUDES AS $includePath) {
-				$filePath = "{$includePath}/App/Views/{$viewFileName}.html";
+			$filePath = "{$_SERVER['DOCUMENT_ROOT']}/../App/Views/{$viewFileName}.html";
 
-				if (file_exists($filePath) && ($this->templateData = file_get_contents($filePath, TRUE)) !== FALSE) {
-					return;
-				}
+			if (file_exists($filePath) && ($this->templateData = file_get_contents($filePath, TRUE)) !== FALSE) {
+				return;
 			}
 
 			throw new Exception("Requested template '{$viewFileName}' was not found");
