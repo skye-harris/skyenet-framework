@@ -147,6 +147,34 @@
 			}
 		}
 
+		protected function initAutoloader(): void {
+			spl_autoload_register(static function (string $class) {
+				if ($class[0] === '/')
+					$class = substr($class, 1);
+
+				$namespaces = ['Console','App'];
+
+				$classPath = str_replace('\\', '/', $class);
+				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));
+
+				if (!in_array($primaryNamespace, $namespaces,true)) {
+					return false;
+				}
+
+				$testPath = "{$_SERVER['DOCUMENT_ROOT']}/../{$classPath}.php";
+
+				if (file_exists($testPath)) {
+					/** @noinspection PhpIncludeInspection */
+					require $testPath;
+
+					return true;
+				}
+
+				return false;
+			});
+
+		}
+
 		/**
 		 * @throws Exception
 		 */
@@ -157,6 +185,7 @@
 			@set_exception_handler(array($this, 'exception_handler'));
 
 			$this->loadConfig();
+			$this->initAutoloader();
 		}
 
 		/**
