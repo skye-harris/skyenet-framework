@@ -94,11 +94,15 @@
 			}
 		}
 
+		public function rootPath(): string {
+			return PHP_SAPI === 'cli' ? getcwd() : "{$_SERVER['DOCUMENT_ROOT']}/..";
+		}
+
 		/**
 		 * @throws Exception
 		 */
 		protected function loadConfig(): void {
-			$configFile = $_SERVER['DOCUMENT_ROOT']. '/../config.json';
+			$configFile = "{$this->rootPath()}/config.json";
 
 			if (!file_exists($configFile))
 				throw new Exception('config.json does not exist');
@@ -148,17 +152,14 @@
 		}
 
 		protected function initAutoloader(): void {
-			spl_autoload_register(static function (string $class) {
+			/** @var $self self */
+			$self = $this;
+
+			spl_autoload_register(static function (string $class) use ($self) {
 				if ($class[0] === '/')
 					$class = substr($class, 1);
 
 				$namespaces = ['Console','App'];
-
-				if (PHP_SAPI === 'cli') {
-					$pathRoot = getcwd();
-				} else {
-					$pathRoot = "{$_SERVER['DOCUMENT_ROOT']}/..";
-				}
 
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));
@@ -167,7 +168,7 @@
 					return false;
 				}
 
-				$testPath = "{$pathRoot}/{$classPath}.php";
+				$testPath = "{$self->rootPath()}/{$classPath}.php";
 
 				if (file_exists($testPath)) {
 					/** @noinspection PhpIncludeInspection */
