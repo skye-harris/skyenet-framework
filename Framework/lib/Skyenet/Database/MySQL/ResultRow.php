@@ -15,9 +15,9 @@
 	use Skyenet\Traits\Descriptive;
 
 	class ResultRow implements ArrayAccess, Iterator, Countable {
-		private $data = [];
-		private $assocIndex = [];
-		private $foreachIndex = 0;
+		private array $data = [];
+		private array $assocIndex = [];
+		private int $foreachIndex = 0;
 
 		public function __construct(array $assocRowData) {
 			foreach ($assocRowData AS $key => $val) {
@@ -173,7 +173,7 @@
 			return array_keys($this->data);
 		}
 
-		public function getArray(): array {
+		public function toArray(): array {
 			return $this->data;
 		}
 	}

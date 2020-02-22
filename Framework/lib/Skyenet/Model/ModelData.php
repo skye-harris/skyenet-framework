@@ -55,7 +55,7 @@
 				$passPhrase = Skyenet::$CONFIG['DATABASE_ENCRYPTION_PASSPHRASE'];
 
 				/** @noinspection SqlResolve */
-				$res = $sql->prepareStatement("SELECT AES_DECRYPT(value, UNHEX(SHA2(?,512))) AS value FROM {$tableName} WHERE uuid=UNHEX(?) AND name=? LIMIT 1")
+				$res = $sql->prepareStatement("SELECT AES_DECRYPT(`value`, UNHEX(SHA2(?,512))) AS `value` FROM `{$tableName}` WHERE `uuid`=UNHEX(?) AND `name`=? LIMIT 1")
 						   ->bindParams($passPhrase,$objectModel->getUuid(), $key)
 						   ->execute();
 
@@ -82,7 +82,7 @@
 			$passPhrase = Skyenet::$CONFIG['DATABASE_ENCRYPTION_PASSPHRASE'];
 
 			/** @noinspection SqlResolve */
-			$query = "INSERT INTO {$tableName} (uuid,name,value) VALUES (UNHEX(?),?,AES_ENCRYPT(?, UNHEX(SHA2(?,512)))) ON DUPLICATE KEY UPDATE value=AES_ENCRYPT(?, UNHEX(SHA2(?,512)));";
+			$query = "INSERT INTO `{$tableName}` (`uuid`,`name`,`value`) VALUES (UNHEX(?),?,AES_ENCRYPT(?, UNHEX(SHA2(?,512)))) ON DUPLICATE KEY UPDATE value=AES_ENCRYPT(?, UNHEX(SHA2(?,512)));";
 
 			try {
 				$res = $sql->prepareStatement($query)
@@ -107,7 +107,7 @@
 
 				try {
 					/** @noinspection SqlResolve */
-					$sql->prepareStatement("DELETE FROM {$this::TableName()} WHERE uuid=UNHEX(?) AND name=? LIMIT 1")
+					$sql->prepareStatement("DELETE FROM `{$this::TableName()}` WHERE `uuid`=UNHEX(?) AND `name`=? LIMIT 1")
 						->bindParams($this->_uuid, $this->_variableMap['name'])
 						->execute();
 

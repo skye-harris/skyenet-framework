@@ -3,20 +3,18 @@
     "description": "Skyenet PHP Framework",
     "type": "library",
     "keywords": ["framework","database","validation","mvc","templating"],
-    "homepage": "https://skyenet.tk/",
+    "homepage": "https://skyeharris.dev/",
     "license": "todo",
     "authors": [
         {
             "name": "Skye Harris",
             "email": "skyeisfullyawesome@gmail.com",
-            "homepage": "https://skyenet.tk"
+            "homepage": "https://skyeharris.dev"
         }
     ],
     "require": {
         "php": ">=7.4",
-        "ezyang/htmlpurifier": "^4.11",
         "jkingweb/druuid": "3.0.0",
-        "tecnick.com/tcpdf": "6.2.26",
         "ext-json": "*",
         "ext-apache": "*",
         "ext-bcmath": "*",

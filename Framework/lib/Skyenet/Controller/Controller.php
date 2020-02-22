@@ -14,38 +14,38 @@
 	use ReflectionException;
 	use Skyenet\EventManager\Event;
 	use Skyenet\EventManager\EventManager;
-	use Skyenet\Model\Model;
+	use Skyenet\Http\UrlLoadable;
 	use Skyenet\Route\Route;
 	use Skyenet\Skyenet;
 
 	abstract class Controller {
-		protected Skyenet $mvc;
+		protected Skyenet $skyenet;
 
 		public const EVENT_PRE_RUN = 'CONTROLLER:PRE_RUN';
 		public const EVENT_POST_RUN = 'CONTROLLER:POST_RUN';
 
 		public function __construct() {
-			$this->mvc = Skyenet::getInstance();
+			$this->skyenet = Skyenet::getInstance();
 		}
 
-		// this has been moved here so that a controller can override behaviour if required
+		public function executeRoute(Route $route, array $parameters): void {
+			call_user_func_array([$this,$route->functionName],$parameters);
+		}
 
 		/**
 		 * @param Route $route
+		 * @return array
 		 * @throws LoadException
 		 */
-		public function runRoute(Route $route): void {
-			// Broadcast our PRE_RUN event.. if we are returned false here, then bail-out
-			if (EventManager::BroadcastEvent($event = new Event(static::EVENT_PRE_RUN, $this, null, true))) {
-				throw new LoadException('Route invocation rejected due to a cancelled EVENT_PRE_RUN event', $event->getCancellationUserFriendlyMessage());
-			}
+		final public function instantiateParametersForRoute(Route $route): array {
+			$output = [];
 
 			try {
 				$reflectionClass = new ReflectionClass(get_class($this));
 				$reflectionMethod = $reflectionClass->getMethod($route->functionName);
 				$reflectionParameters = $reflectionMethod->getParameters();
 
-				$bindVars = [];
+				// map our function parameters to the route variables
 				foreach ($reflectionParameters AS $reflectionParameter) {
 					$paramName = $reflectionParameter->getName();
 					$paramType = $reflectionParameter->getType();
@@ -57,46 +57,64 @@
 							throw new LoadException("Unable to match variable {$paramName}");
 						}
 
-						$bindVars[]= $bindVar;
+						$output[]= $bindVar;
 
 						continue;
 					}
 
 					if ($paramType->isBuiltin()) {
-						$bindVars[] = $route->matchVars[$paramName];
+						// built-ins are passed-through directly
+						$output[] = $route->matchVars[$paramName];
 					} else {
+						// objects must implement UrlLoadable, so that we can load it and pass through to the function
 						$paramClass = $reflectionParameter->getClass();
-						if ($paramClass->isSubclassOf(Model::class)) {
+						if ($paramClass->implementsInterface(UrlLoadable::class)) {
 							try {
-								// function is mandatory for Models
-								$loadMethod = $paramClass->getMethod('LoadByUuid');
+								$loadMethod = $paramClass->getMethod('LoadFromRequestString');
 
-								$bindVars[] = $loadMethod->invoke(null, $route->matchVars[$paramName]);
+								$output[] = $loadMethod->invoke(null, $route->matchVars[$paramName]);
 							}
-							/** @noinspection PhpRedundantCatchClauseInspection */
+								/** @noinspection PhpRedundantCatchClauseInspection */
 							catch (\Skyenet\Model\LoadException $exception) {
 								if (!$reflectionParameter->allowsNull()) {
 									throw new LoadException("Failed to instantiate {$paramClass->getName()} for parameter {$paramName}", null, 0, $exception);
 								}
 
-								$bindVars[] = null;
+								$output[] = null;
 							}
 						} else {
 							if (!$reflectionParameter->allowsNull()) {
-								$modelClass = Model::class;
+								$loadableClass = UrlLoadable::class;
 
-								throw new LoadException("Unable to instantiate class {$paramClass->getName()} for parameter {$paramName}: Object must subclass {$modelClass}");
+								throw new LoadException("Unable to instantiate class {$paramClass->getName()} for parameter {$paramName}: Object must implement {$loadableClass}");
 							}
 
-							$bindVars[] = null;
+							$output[] = null;
 						}
 					}
 				}
-
-				call_user_func_array([$this,$route->functionName],$bindVars);
 			} catch (ReflectionException $e) {
 				throw new LoadException("Failed to load Route method: {$e->getMessage()}", null, 0, $e);
 			}
+
+			return $output;
+		}
+
+		/**
+		 * @param Route $route
+		 * @throws LoadException
+		 */
+		public function prepareForRoute(Route $route): void {
+			// Broadcast our PRE_RUN event.. if we are returned false here, then bail-out
+			if (EventManager::BroadcastEvent($event = new Event(static::EVENT_PRE_RUN, $this, null, true))) {
+				throw new LoadException('Route invocation rejected due to a cancelled EVENT_PRE_RUN event', $event->getCancellationUserFriendlyMessage());
+			}
+
+			// map our function parameters to the route variables
+			$bindVars = $this->instantiateParametersForRoute($route);
+
+			// run our route function
+			$this->executeRoute($route, $bindVars);
 
 			// Broadcast our POST_RUN event
 			EventManager::BroadcastEvent(new Event(static::EVENT_POST_RUN, $this));

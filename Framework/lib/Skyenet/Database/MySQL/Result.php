@@ -15,17 +15,17 @@
 	use Skyenet\Traits\Descriptive;
 
 	class Result implements Iterator, Countable {
-		public $num_rows = 0;
-		public $affected_rows = 0;
-		public $insert_id = 0;
+		public int $num_rows = 0;
+		public int $affected_rows = 0;
+		public int $insert_id = 0;
 
-		private $_num_rows;
-		private $rowIndex = 0;
+		private int $_num_rows = 0;
+		private int $rowIndex = 0;
 
-		private $fieldNames = [];
+		private array $fieldNames = [];
 
-		private $sqlStatement;
-		private $rowContent = [];
+		private ?mysqli_stmt $sqlStatement;
+		private array $rowContent = [];
 
 		public function result_metadata(): mysqli_result {
 			return $this->sqlStatement->result_metadata();

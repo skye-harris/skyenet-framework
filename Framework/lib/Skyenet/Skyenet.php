@@ -98,7 +98,7 @@
 		 * @throws Exception
 		 */
 		protected function loadConfig(): void {
-			$configFile = $_SERVER['DOCUMENT_ROOT'] . '/../config.json';
+			$configFile = __DIR__.'/../../../config.json';
 			//$configFile = __DIR__ . '/../../config.json';
 
 			if (!file_exists($configFile))
@@ -142,10 +142,29 @@
 			// Run the page controller.
 
 			try {
-				$controller->runRoute($route);
+				$controller->prepareForRoute($route);
 			} catch (Error $error) {
 				throw new Exception($error->getMessage(), null, 0, $error);
 			}
+		}
+
+		/**
+		 * @throws Exception
+		 */
+		protected function init(): void {
+			ini_set('html_errors', false);
+
+			ob_start();
+			@set_exception_handler(array($this, 'exception_handler'));
+
+			$this->loadConfig();
+		}
+
+		/**
+		 * @throws Exception
+		 */
+		public function initFramework(): void {
+			$this->init();
 		}
 
 		/**
@@ -153,17 +172,12 @@
 		 * @throws Exception
 		 */
 		public function start(?Controller $forcedController = null): void {
-			ini_set('html_errors', false);
-
-			ob_start();
-			@set_exception_handler(array($this, 'exception_handler'));
-
-			$this->loadConfig();
+			$this->init();
 
 			// Attempt to instantiate the requested pages controller
 			try {
 				if ($forcedController) {
-					$forcedController->runRoute(null);
+					$forcedController->prepareForRoute(null);
 				} else {
 					// Break apart the request URI
 					$urlParts = parse_url($_SERVER['REQUEST_URI']);

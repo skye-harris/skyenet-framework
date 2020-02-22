@@ -10,9 +10,10 @@
 
 
 	use JsonSerializable;
+	use Skyenet\Http\UrlLoadable;
 	use Skyenet\Traits\Descriptive;
 
-	class ManagedData implements JsonSerializable {
+	class ManagedData implements JsonSerializable, UrlLoadable {
 		private $data;
 
 		public function __construct($data) {
@@ -125,5 +126,9 @@
 		 */
 		public function jsonSerialize() {
 			return $this->data;
+		}
+
+		public static function LoadFromRequestString(string $requestString): UrlLoadable {
+			return new static($requestString);
 		}
 	}

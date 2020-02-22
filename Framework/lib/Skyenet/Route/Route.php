@@ -9,13 +9,12 @@
 	namespace Skyenet\Route;
 
 	// todo: add a catch-all option
-	use Skyenet\Traits\Descriptive;
 
 	class Route {
-		public $controllerClass;
-		public $functionName;
-		public $matchVars;
-		private $matchParts;
+		public string $controllerClass;
+		public string $functionName;
+		public ?array $matchVars = null;
+		private array $matchParts;
 
 		public function __construct(?String $urlPath, String $controllerClass, String $functionName) {
 			$this->matchParts = array_values(array_filter(explode('/', $urlPath)));
@@ -34,7 +33,7 @@
 			for ($i = 0; $i < $partCount; $i++) {
 				if ($this->matchParts[$i][0] === '$') {
 					$var = substr($this->matchParts[$i], 1);
-					$this->matchVars[$var] = $requestParts[$i];
+					$this->matchVars[$var] = urldecode($requestParts[$i]);
 
 					continue;
 				}

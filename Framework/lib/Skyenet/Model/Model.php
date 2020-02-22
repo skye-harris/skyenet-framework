@@ -2,6 +2,7 @@
 
 	namespace Skyenet\Model;
 
+	use ReflectionClass;
 	use Skyenet\Cache\ModelCache;
 	use Skyenet\Database\MySQL\ConnectException;
 	use Skyenet\Database\MySQL\Connection;
@@ -10,6 +11,7 @@
 	use Skyenet\Database\MySQL\Statement;
 	use Skyenet\EventManager\Event;
 	use Skyenet\EventManager\EventManager;
+	use Skyenet\Http\UrlLoadable;
 	use Skyenet\ManagedData;
 	use Skyenet\Security\Security;
 
@@ -19,10 +21,11 @@
 	 * Date: 13/05/2017
 	 * Time: 4:37 PM
 	 */
-	abstract class Model implements \JsonSerializable {
+	abstract class Model implements \JsonSerializable, UrlLoadable {
 		protected array $_variableKeys = [];
 		protected array $_variableMap = [];
 		protected array $_dirtyVars = [];
+
 		/*
 		 * eg:
 		 * [
@@ -43,8 +46,11 @@
 		 */
 		public const _oneToMany = [];
 
-		protected ?string $_uuid = null;
+		protected string $_uuid = '';
 		protected bool $_isNew = true;
+
+		/** @var Iterator[] */
+		protected array $_toManyCache = [];
 
 		public const EVENT_PRE_SAVE = 'MODEL:PRE_SAVE';
 		public const EVENT_POST_SAVE = 'MODEL:POST_SAVE';
@@ -55,7 +61,7 @@
 		// PUBLIC FUNCTIONS
 
 		public function __construct(?array $assocArray = null) {
-			$this->_uuid = Security::UUID(false);
+			$this->_uuid = $assocArray['uuid'] ?? Security::UUID(false);
 			$this->_variableKeys = $this->_dirtyVars = array_keys($this->_variableMap);
 
 			if ($assocArray) {
@@ -70,28 +76,31 @@
 		 * @throws Exception
 		 */
 		public function __call($name, $arguments) {
+			// Test if this is one of our one-to-one getters, and attempt to return the relation model
 			if ($oneToOne = static::_oneToOne[$name] ?? null) {
 				[$relatedClass, $relationKey] = $oneToOne;
 
-				try {
-					// should we let this just throw the LoadException here?
-					/** @var Model $relatedClass */
-					return $relatedClass::LoadByUuid($this->_variableMap[$relationKey]);
-				} catch (LoadException $exception) {
-					return null;
-				}
+				/** @var Model $relatedClass */
+				return $relatedClass::LoadByUuid($this->_variableMap[$relationKey]);
 			}
 
+			// Test if this is one of our one-to-many getters, and attempt to return the relation iterator
 			if ($oneToMany = static::_oneToMany[$name] ?? null) {
 				[$relatedClass, $relationKey] = $oneToMany;
 
 				/** @var Model $relatedClass */
-				return $relatedClass::LoadEx("{$relationKey}=UNHEX(?)", [$this->_uuid]);
+				$iterator = $this->_toManyCache[$name] ??= $relatedClass::LoadEx("{$relationKey}=UNHEX(?)", [$this->_uuid]);
+
+				return $iterator;
 			}
 
 			throw new Exception("No method to invoke with name '{$name}'");
 		}
 
+		/**
+		 * @param $name
+		 * @return ManagedData
+		 */
 		public function __get($name): ManagedData {
 			return new ManagedData($this->_variableMap[$name] ?? null);
 		}
@@ -102,6 +111,7 @@
 		 * @throws SaveException
 		 */
 		public function __set(string $name, $value): void {
+			// Extract our real value,
 			if ($value instanceof ManagedData) {
 				$realVal = $value();
 			} else if ($value instanceof self) {
@@ -110,12 +120,14 @@
 				$realVal = $value;
 			}
 
+			// Is this key a part of our model?
 			if (!in_array($name, $this->_variableKeys, true)) {
-				$myClassName = get_class($this);
+				$myClass = static::class;
 
-				throw new SaveException("Object {$myClassName} has no property named '{$name}'");
+				throw new SaveException("Object '{$myClass}' has no property named '{$name}'");
 			}
 
+			// Update the value and mark it as dirty, if the value has changed
 			if ($realVal !== $this->_variableMap[$name]) {
 				if (!in_array($name, $this->_dirtyVars, true)) {
 					$this->_dirtyVars[] = $name;
@@ -130,6 +142,18 @@
 		}
 
 		private function __clone() {
+		}
+
+		/**
+		 * @param ManagedData|string $uuid
+		 * @throws Exception
+		 */
+		public function setUuid($uuid): void {
+			if (!$this->_isNew) {
+				throw new Exception('Model UUID can only be changed on NEW/UNSAVED models');
+			}
+
+			$this->_uuid = self::CleanUuid($uuid);
 		}
 
 		public function getUuid(bool $binaryForm = false): string {
@@ -159,7 +183,8 @@
 			try {
 				$sql = Connection::getInstance();
 			} catch (ConnectException $e) {
-				throw new SaveException("Failed to delete object due to a MySQL\\ConnectException", null, 0, $e);
+				$myClass = static::class;
+				throw new SaveException("Failed to delete {$myClass} due to a MySQL\\ConnectException", null, 0, $e);
 			}
 
 			try {
@@ -171,10 +196,11 @@
 				}
 
 				/** @noinspection SqlResolve */
-				$res = $sql->prepareStatement("DELETE FROM {$this::TableName()} WHERE uuid=UNHEX(?) LIMIT 1")
+				$res = $sql->prepareStatement("DELETE FROM `{$this::TableName()}` WHERE uuid=UNHEX(?) LIMIT 1")
 						   ->bindParams($this->_uuid)
 						   ->execute();
 
+				// Flip this as we are no longer backed by our DB
 				$this->_isNew = true;
 
 				// If we have an affected row, then broadcast our POST_DELETE event
@@ -183,7 +209,9 @@
 				}
 
 			} catch (QueryException $e) {
-				throw new SaveException("Failed to delete object due to a MySQL\\QueryException", null, 0, $e);
+				$myClass = static::class;
+
+				throw new SaveException("Failed to delete {$myClass} due to a MySQL\\QueryException", null, 0, $e);
 			}
 		}
 
@@ -194,7 +222,9 @@
 			try {
 				$sql = Connection::getInstance();
 			} catch (ConnectException $e) {
-				throw new SaveException('Failed to save object due to a MySQL\\ConnectException', null, 0, $e);
+				$myClass = static::class;
+
+				throw new SaveException("Failed to save {$myClass} due to a MySQL\\ConnectException", null, 0, $e);
 			}
 
 			// Broadcast our PRE_SAVE event.. if we are returned false here, then bail-out
@@ -202,6 +232,7 @@
 				throw new SaveException('Model save rejected due to a cancelled EVENT_PRE_SAVE event', $event->getCancellationUserFriendlyMessage());
 			}
 
+			// Populate the query with our dirty fields
 			$values = [];
 			$queryPart = [];
 			foreach ($this->_dirtyVars AS $key) {
@@ -209,24 +240,26 @@
 					continue;
 				}
 
-				$queryPart[] = !$this->_isNew ? "{$key}=?" : $key;
+				$queryPart[] = !$this->_isNew ? "`{$key}`=?" : $key;
 
 				$values[] = $this->_variableMap[$key];
 			}
 
+			// Only make the DB call if we actually have data to be updated
 			if (count($values)) {
 				$queryPart = implode(',', $queryPart);
 
-
+				// todo: consider what repercussions there may be if this is changed to an upsert
 				if (!$this->_isNew) {
 					$query = "# noinspection SqlInsertValues
-					UPDATE {$this::TableName()} SET {$queryPart} WHERE uuid=UNHEX(?) LIMIT 1";
+					UPDATE `{$this::TableName()}` SET {$queryPart} WHERE `uuid`=UNHEX(?) LIMIT 1";
 				} else {
 					$placeholderPart = implode(',', array_fill(0, count($values), '?'));
 
 					$query = "# noinspection SqlInsertValues
-					INSERT INTO {$this::TableName()} ({$queryPart},uuid) VALUES ({$placeholderPart},UNHEX(?));";
+					INSERT INTO `{$this::TableName()}` ({$queryPart},`uuid`) VALUES ({$placeholderPart},UNHEX(?));";
 				}
+
 				$values[] = $this->_uuid;
 
 				try {
@@ -234,8 +267,7 @@
 							   ->bindParams($values)
 							   ->execute();
 
-					$res->Close();
-
+					// Insert our model into the weak-reference cache
 					if ($this->_isNew)
 						$this->cacheSelf();
 
@@ -246,13 +278,15 @@
 						EventManager::BroadcastEvent(new Event($this::EVENT_POST_SAVE, $this));
 					}
 				} catch (QueryException $e) {
-					throw new SaveException("Failed to save object due to a MySQL\\QueryException: {$e->getMessage()}", null, 0, $e);
+					$myClass = static::class;
+					throw new SaveException("Failed to save {$myClass} due to a MySQL\\QueryException: {$e->getMessage()}", null, 0, $e);
 				}
 			}
 		}
 
-		public function jsonSerialize() {
+		public function jsonSerialize(): array {
 			$myData = $this->_variableMap;
+			$myData['uuid'] = $this->getUuid();
 
 			foreach ($myData AS $key => $value) {
 				if (stripos($key, 'uuid') && strlen($value) === 16) {
@@ -273,20 +307,23 @@
 			try {
 				$sql = Connection::getInstance();
 			} catch (ConnectException $e) {
-				throw new LoadException("Failed to load object due to a MySQL\\ConnectException", null, 0, $e);
+				$myClass = static::class;
+				throw new LoadException("Failed to load {$myClass} due to a MySQL\\ConnectException", null, 0, $e);
 			}
 
 			try {
 				/** @noinspection SqlResolve */
 				$res = $sql->query("SELECT * FROM {$this::TableName()} WHERE uuid=? LIMIT 1 FOR UPDATE;", $binaryUuid);
 			} catch (QueryException $e) {
-				throw new LoadException('Failed to load object due to a MySQL\\QueryException', null, 0, $e);
+				$myClass = static::class;
+				throw new LoadException("Failed to load {$myClass} due to a MySQL\\QueryException", null, 0, $e);
 			}
 
 			if ($res->num_rows !== 1) {
 				$res->close();
+				$myClass = static::class;
 
-				throw new LoadException('Failed to load object due to no results returned');
+				throw new LoadException("Failed to load {$myClass} due to no results returned");
 			}
 
 			$row = $res->fetch_assoc();
@@ -327,6 +364,26 @@
 
 		// PUBLIC STATIC FUNCTIONS
 
+		public static function Events(bool $includeParentalEvents = false): array {
+			// Fetch all events from this class and its ancestors
+
+			$class = new ReflectionClass(static::class);
+			$eventArray = [];
+
+			while (true) {
+				foreach (['EVENT_POST_DELETE', 'EVENT_POST_LOAD', 'EVENT_POST_SAVE', 'EVENT_PRE_SAVE', 'EVENT_PRE_DELETE'] AS $eventName) {
+					$eventArray[] = $class->getConstant($eventName);
+				}
+
+				$class = $class->getParentClass();
+
+				if (!$includeParentalEvents || !$class)
+					break;
+			}
+
+			return $eventArray;
+		}
+
 		/**
 		 * @param string|ManagedData $uuid
 		 * @return mixed|Model|null
@@ -360,7 +417,8 @@
 			try {
 				$sql = Connection::getInstance();
 			} catch (ConnectException $e) {
-				throw new LoadException("Failed to load object due to a MySQL\\ConnectException", null, 0, $e);
+				$myClass = static::class;
+				throw new LoadException("Failed to load {$myClass} due to a MySQL\\ConnectException", null, 0, $e);
 			}
 
 			$wherePart = $whereString ? "WHERE {$whereString}" : null;
@@ -370,14 +428,15 @@
 			try {
 				$tableName = static::TableName();
 
-				$stmt = $sql->prepareStatement("SELECT * FROM {$tableName} {$wherePart} {$orderPart} {$limitPart} FOR UPDATE;");
+				$stmt = $sql->prepareStatement("SELECT * FROM `{$tableName}` {$wherePart} {$orderPart} {$limitPart} FOR UPDATE;");
 				if ($whereVariables && count($whereVariables)) {
 					$stmt->bindParams($whereVariables);
 				}
 
 				return static::InstantiateClassIterator($stmt);
 			} catch (QueryException $e) {
-				throw new LoadException("Failed to load object due to a MySQL\\QueryException", null, 0, $e);
+				$myClass = static::class;
+				throw new LoadException("Failed to load {$myClass} due to a MySQL\\QueryException", null, 0, $e);
 			}
 		}
 
@@ -419,6 +478,15 @@
 			return hex2bin($uuid);
 		}
 
+		/**
+		 * @param string $requestString
+		 * @return UrlLoadable
+		 * @throws LoadException
+		 */
+		public static function LoadFromRequestString(string $requestString): UrlLoadable {
+			return static::LoadByUuid($requestString);
+		}
+
 		// PROTECTED STATIC FUNCTIONS
 
 		/**
@@ -431,7 +499,7 @@
 		 * @return Iterator
 		 * @throws LoadException
 		 */
-		protected static function LoadWithSearch(array $searchFields, SearchTokeniser $searchTokeniser, ?string $whereString = null, array $whereVariables = null, ?string $orderBy = 'searchRelevanceScore DESC', ?int $limit = null): Iterator {
+		final protected static function LoadWithSearch(array $searchFields, SearchTokeniser $searchTokeniser, ?string $whereString = null, array $whereVariables = null, ?string $orderBy = 'searchRelevanceScore DESC', ?int $limit = null): Iterator {
 			if (!$searchTokeniser->searchTerm) {
 				throw new LoadException('Failed to perform Model Search as no valid Search Term available in the SearchTokeniser', 'No valid search term provided');
 			}
@@ -447,9 +515,9 @@
 			$tableName = static::TableName();
 
 			$searchQuery = "
-SELECT *, (MATCH({$searchFieldPart}) AGAINST (? IN BOOLEAN MODE)) AS searchRelevanceScore
+SELECT *, (MATCH({$searchFieldPart}) AGAINST (? IN BOOLEAN MODE)) AS `searchRelevanceScore`
 
-FROM {$tableName}
+FROM `{$tableName}`
 
 WHERE {$wherePart} MATCH({$searchFieldPart}) AGAINST (? IN BOOLEAN MODE)
 
@@ -472,7 +540,7 @@ WHERE {$wherePart} MATCH({$searchFieldPart}) AGAINST (? IN BOOLEAN MODE)
 			return static::InstantiateClassIterator($stmt);
 		}
 
-		protected static function CleanUuid($uuid): string {
+		final protected static function CleanUuid($uuid): string {
 			// if of ManagedData type, extract the raw value to work with
 			if ($uuid instanceof ManagedData) {
 				$uuid = $uuid->rawValue();
@@ -492,7 +560,7 @@ WHERE {$wherePart} MATCH({$searchFieldPart}) AGAINST (? IN BOOLEAN MODE)
 		 * @param Statement $statement
 		 * @return Iterator
 		 */
-		protected static function InstantiateClassIterator(Statement $statement): Iterator {
+		final protected static function InstantiateClassIterator(Statement $statement): Iterator {
 			$classIterator = static::class . 'Iterator';
 			if (!class_exists($classIterator)) {
 				$classIterator = Iterator::class;

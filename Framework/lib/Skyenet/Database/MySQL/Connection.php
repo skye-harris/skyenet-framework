@@ -47,11 +47,13 @@
 
 		// End Singleton stuff
 
-		private $dbName = '';
+		protected $dbName = '';
 		/**
 		 * @var mysqli $mysqli
 		 */
-		private $mysqli;
+		protected $mysqli;
+
+		protected bool $inTransaction = false;
 
 		/**
 		 * @param string $dbName
@@ -181,7 +183,6 @@
 			return $stmt->execute();
 		}
 
-
 		/**
 		 * @param $query
 		 * @return Statement
@@ -199,6 +200,10 @@
 			return $this->mysqli ? $this->mysqli->ping() : false;
 		}
 
+		public function isInTransaction(): bool {
+			return $this->inTransaction;
+		}
+
 		/**
 		 * @throws TransactionException
 		 */
@@ -210,6 +215,8 @@
 			if (!$this->mysqli->begin_transaction()) {
 				throw new TransactionException("Failed to begin transaction: {$this->mysqli->error}");
 			}
+
+			$this->inTransaction = true;
 		}
 
 		/**
@@ -223,6 +230,8 @@
 			if (!$this->mysqli->commit()) {
 				throw new TransactionException("Failed to commit transaction: {$this->mysqli->error}");
 			}
+
+			$this->inTransaction = false;
 		}
 
 		public function rollbackTransaction(): bool {
@@ -235,6 +244,8 @@
 			if (!$this->mysqli->rollback())
 				throw new TransactionException("Failed to rollback transaction: ".$this->mysqli->error);
 			*/
+
+			$this->inTransaction = false;
 
 			return $this->mysqli->rollback();
 		}
@@ -252,7 +263,6 @@
 				throw new TransactionException("Failed to release savepoint '{$savePoint}': {$this->mysqli->error}");
 			}
 		}
-
 
 		/**
 		 * @param string $savePoint

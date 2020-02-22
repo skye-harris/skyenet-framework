@@ -37,6 +37,14 @@
 				$this->ignoreCache = true;
 			}
 
+			$this->refresh();
+		}
+
+		public function getCurrentSearchRelevancyScore(): float {
+			return $this->currentSearchRelevancyScore;
+		}
+
+		public function refresh(): void {
 			try {
 				$this->sqlResult = $this->sqlStatement->execute();
 
@@ -46,10 +54,6 @@
 				$className = static::class;
 				Logger::Error("{$className} has failed to load the query results: {$e->getMessage()}");
 			}
-		}
-
-		public function getCurrentSearchRelevancyScore(): float {
-			return $this->currentSearchRelevancyScore;
 		}
 
 		public function count(): int {
@@ -126,7 +130,7 @@
 		 * @return mixed Can return any type.
 		 * @since 5.0.0
 		 */
-		public function current() {
+		public function current(): ?Model {
 			$result = null;
 
 			try {
