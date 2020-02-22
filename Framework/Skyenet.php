@@ -154,6 +154,12 @@
 
 				$namespaces = ['Console','App'];
 
+				if (PHP_SAPI === 'cli') {
+					$pathRoot = getcwd();
+				} else {
+					$pathRoot = "{$_SERVER['DOCUMENT_ROOT']}/..";
+				}
+
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));
 
@@ -161,7 +167,7 @@
 					return false;
 				}
 
-				$testPath = "{$_SERVER['DOCUMENT_ROOT']}/../{$classPath}.php";
+				$testPath = "{$pathRoot}/{$classPath}.php";
 
 				if (file_exists($testPath)) {
 					/** @noinspection PhpIncludeInspection */
