@@ -12,7 +12,6 @@
 	use Countable;
 	use Iterator;
 	use Skyenet\ManagedData;
-	use Skyenet\Traits\Descriptive;
 
 	class ResultRow implements ArrayAccess, Iterator, Countable {
 		private array $data = [];

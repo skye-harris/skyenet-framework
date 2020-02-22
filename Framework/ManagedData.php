@@ -11,7 +11,6 @@
 
 	use JsonSerializable;
 	use Skyenet\Http\UrlLoadable;
-	use Skyenet\Traits\Descriptive;
 
 	class ManagedData implements JsonSerializable, UrlLoadable {
 		private $data;

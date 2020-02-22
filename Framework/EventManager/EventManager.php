@@ -9,7 +9,6 @@
 	namespace Skyenet\EventManager;
 
 	use Error;
-	use Skyenet\Traits\Descriptive;
 
 	class EventManager {
 		private static array $eventListeners = [];

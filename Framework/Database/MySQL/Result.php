@@ -12,7 +12,6 @@
 	use Iterator;
 	use mysqli_result;
 	use mysqli_stmt;
-	use Skyenet\Traits\Descriptive;
 
 	class Result implements Iterator, Countable {
 		public int $num_rows = 0;

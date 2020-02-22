@@ -8,7 +8,6 @@
 
 	namespace Skyenet;
 
-	use Skyenet\Traits\Descriptive;
 	use Throwable;
 
 	class Exception extends \Exception {

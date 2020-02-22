@@ -11,7 +11,6 @@
 
 	// HTML Template file loader class
 	use Skyenet\ManagedData;
-	use Skyenet\Traits\Descriptive;
 
 	class View {
 		private string $templateData;

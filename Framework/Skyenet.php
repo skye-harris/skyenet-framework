@@ -16,9 +16,8 @@
 	use Skyenet\Route\Route;
 	use Skyenet\Route\RouteManager;
 	use Skyenet\Security\Security;
-	use Throwable;
-	use App\Controller\FourOhFourController;
 	use Skyenet\Traits\Singleton;
+	use Throwable;
 
 	class Skyenet {
 		use Singleton;

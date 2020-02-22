@@ -11,7 +11,6 @@
 	use mysqli;
 	use mysqli_stmt;
 	use Skyenet\ManagedData;
-	use Skyenet\Traits\Descriptive;
 
 	class Statement {
 		/**

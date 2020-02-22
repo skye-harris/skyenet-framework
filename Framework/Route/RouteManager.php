@@ -8,7 +8,6 @@
 
 	namespace Skyenet\Route;
 
-	use Skyenet\Traits\Descriptive;
 	use Skyenet\Traits\Singleton;
 
 	class RouteManager {
