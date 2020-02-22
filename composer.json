@@ -27,6 +27,8 @@
     "roave/security-advisories": "dev-master"
   },
   "autoload": {
-    "psr-0": { "Skyenet\\*": "Framework/lib/Skyenet" }
+    "classmap": [
+      "src/"
+    ]
   }
 }
