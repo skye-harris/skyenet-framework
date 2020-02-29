@@ -329,6 +329,7 @@
 			$res->Close();
 
 			$this->initialise($row);
+			$this->_dirtyVars = [];
 		}
 
 		/**
@@ -347,8 +348,6 @@
 
 				$this->_variableMap[$key] = $field instanceof ManagedData ? $field->rawValue() : ($field ?? null);
 			}
-
-			$this->_dirtyVars = [];
 
 			// todo: check for collision?
 			$this->cacheSelf();
