@@ -13,6 +13,7 @@
 	use UnitTests\UnitTest;
 
 	class ValidationTest extends UnitTest {
+		// Dates
 		public function testValidDate(): void {
 			$date = '2012-12-23';
 
@@ -47,6 +48,7 @@
 						 ->value();
 		}
 
+		// Integers
 		public function testValidInteger(): void {
 			$int = 5;
 
@@ -94,6 +96,7 @@
 						 ->value();
 		}
 
+		// Floats
 		public function testValidFloat(): void {
 			$float = 5.5;
 
@@ -132,6 +135,7 @@
 						 ->value();
 		}
 
+		// Strings
 		public function testValidEmailAddress(): void {
 			$email = 'alias+test@email.domain.com';
 
@@ -153,6 +157,30 @@
 						 ->value();
 		}
 
+		public function testRegexValidationSuccess(): void {
+			$input = 'hello WORLD';
+
+			$value = DataValidator::ForValue($input)
+								  ->string()
+								  ->matchesPattern('/^([a-z]+) ([A-Z]{5})$/', null, $matches)
+								  ->value();
+
+			$this->assertEquals($value, $input);
+			$this->assertCount(3, $matches);
+			$this->assertEquals('WORLD',$matches[2]);
+		}
+
+		public function testRegexValidationFailure(): void {
+			$input = 'hellO WORLD';
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($input)
+						 ->string()
+						 ->matchesPattern('/^[a-z]+ [A-Z]{5}$/')
+						 ->value();
+		}
+
+		// JSON Objects
 		public function testValidJsonObject(): void {
 			$object = [
 				'key' => 'val'
@@ -178,8 +206,9 @@
 						 ->value();
 		}
 
+		// JSON Arrays
 		public function testValidJsonArray(): void {
-			$array = [1,2,3];
+			$array = [1, 2, 3];
 
 			$json = json_encode($array, JSON_THROW_ON_ERROR, 512);
 
