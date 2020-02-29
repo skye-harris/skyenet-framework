@@ -46,8 +46,7 @@
 			throw new Exception("Requested template '{$viewFileName}' was not found");
 		}
 
-		//todo: fix: does not handle nested conditions properly
-		public function buildOutputNew(?array $namedVariableArray = null, bool $conditionChecks = false): string {
+		public function buildOutput(?array $namedVariableArray = null, bool $conditionChecks = false): string {
 			$vars = [];
 			if ($namedVariableArray) {
 				foreach ($namedVariableArray AS $key => $val) {
@@ -60,131 +59,135 @@
 			// basic conditional branching within templates
 			if ($conditionChecks === true) {
 				// Test for @if/@endif constructs, supports nested
-				$compiledString = preg_replace_callback('/@if\s*\((((?!@if).)*)\)(((?!@if).)*)(?:(?R)|)@endif/sU', static function ($matches) use ($namedVariableArray) {
-					$variableName = trim($matches[1]);
-					$trueText = $matches[3];
+				$continueProcessing = true;
 
-					$operandNOT = false;
+				while ($continueProcessing) {
+					$compiledString = preg_replace_callback('/@if\s*\((((?!@if).)*)\)(((?!@if).)*)(?:(?R)|)@endif/sU', static function ($matches) use ($namedVariableArray) {
+						$variableName = trim($matches[1]);
+						$trueText = $matches[3];
 
-					$operand = null;
-					$comparator = null;
-					$isTrue = false;
-					$failOver = false;
+						$operandNOT = false;
 
-					// if our condition begins with !, negate it
-					if ($variableName[0] === '!') {
-						$operandNOT = true;
-						$variableName = trim(substr($variableName, 1));
-					}
+						$operand = null;
+						$comparator = null;
+						$isTrue = false;
+						$failOver = false;
 
-					// Strip $ from the variable name, if present
-					if ($variableName[0] === '$') {
-						$variableName = trim(substr($variableName, 1));
-					}
-
-					// todo: build some logic to parse condition strings to support more complex operations
-					// e.g. allowing both variables or constants on either side of the test
-					// perhaps even performing multiple tests, supporting brackets
-
-					if (strpos($variableName, '==') !== false) {
-						$parts = explode('==', $variableName);
-						$comparator = trim($parts[1]);
-						$variableName = trim($parts[0]);
-
-						if ($comparator[0] === '\'' || $comparator[0] === '"') {
-							$comparator = substr($comparator, 1, -1);
-						} else if ($comparator[0] === '$') {
-							$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+						// if our condition begins with !, negate it
+						if ($variableName[0] === '!') {
+							$operandNOT = true;
+							$variableName = trim(substr($variableName, 1));
 						}
 
-						$operand = '==';
-					} else if (strpos($variableName, '>') !== false) {
-						$parts = explode('>', $variableName);
-						$comparator = trim($parts[1]);
-						$variableName = trim($parts[0]);
-						if ($comparator[0] === '$') {
-							$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+						// Strip $ from the variable name, if present
+						if ($variableName[0] === '$') {
+							$variableName = trim(substr($variableName, 1));
 						}
 
-						$operand = '>';
-					} else if (strpos($variableName, '<') !== false) {
-						$parts = explode('<', $variableName);
-						$comparator = trim($parts[1]);
-						$variableName = trim($parts[0]);
-						if ($comparator[0] === '$') {
-							$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+						// todo: build some logic to parse condition strings to support more complex operations
+						// e.g. allowing both variables or constants on either side of the test
+						// perhaps even performing multiple tests, supporting brackets
+
+						if (strpos($variableName, '==') !== false) {
+							$parts = explode('==', $variableName);
+							$comparator = trim($parts[1]);
+							$variableName = trim($parts[0]);
+
+							if ($comparator[0] === '\'' || $comparator[0] === '"') {
+								$comparator = substr($comparator, 1, -1);
+							} else if ($comparator[0] === '$') {
+								$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+							}
+
+							$operand = '==';
+						} else if (strpos($variableName, '>') !== false) {
+							$parts = explode('>', $variableName);
+							$comparator = trim($parts[1]);
+							$variableName = trim($parts[0]);
+							if ($comparator[0] === '$') {
+								$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+							}
+
+							$operand = '>';
+						} else if (strpos($variableName, '<') !== false) {
+							$parts = explode('<', $variableName);
+							$comparator = trim($parts[1]);
+							$variableName = trim($parts[0]);
+							if ($comparator[0] === '$') {
+								$comparator = $namedVariableArray[substr($comparator, 1)] ?? null;
+							}
+
+							$operand = '<';
+
+						} else if (strpos($variableName, '&') !== false) {
+							$parts = explode('&', $variableName);
+							$comparator = trim($parts[1]);
+							$variableName = trim($parts[0]);
+
+							if ($comparator[0] === '$') {
+								if (isset($namedVariableArray[substr($comparator, 1)])) {
+									$comparator = (int)($namedVariableArray[substr($comparator, 1)] ?? 0);
+								} else {
+									$comparator = 0;
+									$failOver = true;
+								}
+							}
+
+							$operand = '&';
 						}
 
-						$operand = '<';
+						$varVal = $namedVariableArray[$variableName] ?? null;
+						if ($varVal instanceof ManagedData) {
+							$varVal = $varVal->rawValue();
+						}
 
-					} else if (strpos($variableName, '&') !== false) {
-						$parts = explode('&', $variableName);
-						$comparator = trim($parts[1]);
-						$variableName = trim($parts[0]);
+						if (is_bool($varVal)) {
+							$varVal = (int)$varVal;
+						}
 
-						if ($comparator[0] === '$') {
-							if (isset($namedVariableArray[substr($comparator, 1)])) {
-								$comparator = (int)($namedVariableArray[substr($comparator, 1)] ?? 0);
-							} else {
-								$comparator = 0;
-								$failOver = true;
+						/** @noinspection TypeUnsafeComparisonInspection */
+						if (($comparator == null && $comparator !== FALSE) && $varVal != null && !$failOver) {
+							$isTrue = true;
+						} else if ($comparator !== null && $varVal !== null && !$failOver) {
+							// perform our condition check
+							switch ($operand) {
+								case '==':
+									/** @noinspection TypeUnsafeComparisonInspection */
+									$isTrue = ($varVal == $comparator);
+									break;
+
+								case '>':
+									$isTrue = ($varVal > $comparator);
+									break;
+
+								case '<':
+									$isTrue = ($varVal < $comparator);
+									break;
+
+								case '&':
+									$isTrue = ($varVal & $comparator);
+									break;
+
+								default:
+									break;
 							}
 						}
 
-						$operand = '&';
-					}
-
-					$varVal = $namedVariableArray[$variableName] ?? null;
-					if ($varVal instanceof ManagedData) {
-						$varVal = $varVal->rawValue();
-					}
-
-					if (is_bool($varVal)) {
-						$varVal = (int)$varVal;
-					}
-
-					/** @noinspection TypeUnsafeComparisonInspection */
-					if (($comparator == null && $comparator !== FALSE) && $varVal != null && !$failOver) {
-						$isTrue = true;
-					} else if ($comparator !== null && $varVal !== null && !$failOver) {
-						// perform our condition check
-						switch ($operand) {
-							case '==':
-								/** @noinspection TypeUnsafeComparisonInspection */
-								$isTrue = ($varVal == $comparator);
-								break;
-
-							case '>':
-								$isTrue = ($varVal > $comparator);
-								break;
-
-							case '<':
-								$isTrue = ($varVal < $comparator);
-								break;
-
-							case '&':
-								$isTrue = ($varVal & $comparator);
-								break;
-
-							default:
-								break;
+						if (($isTrue && !$operandNOT) || (!$isTrue && $operandNOT)) {
+							// If our initial condition is true and we have an @else branch, cull it
+							if ($pos = strpos($trueText, '@else')) {
+								$trueText = trim(substr($trueText, 0, $pos));
+							}
+						} else if ($pos = strpos($trueText, '@else')) {
+							// Cull the initial branch, take the @else
+							$trueText = trim(substr($trueText, $pos + 5));
+						} else {
+							$trueText = '';
 						}
-					}
 
-					if (($isTrue && !$operandNOT) || (!$isTrue && $operandNOT)) {
-						// If our initial condition is true and we have an @else branch, cull it
-						if ($pos = strpos($trueText, '@else')) {
-							$trueText = trim(substr($trueText, 0, $pos));
-						}
-					} else if ($pos = strpos($trueText, '@else')) {
-						// Cull the initial branch, take the @else
-						$trueText = trim(substr($trueText, $pos + 5));
-					} else {
-						$trueText = '';
-					}
-
-					return $trueText;
-				}, $compiledString);
+						return $trueText;
+					}, $compiledString, -1, $continueProcessing);
+				}
 			}
 
 			// Place variables into the final compiled string
@@ -195,7 +198,7 @@
 		}
 
 		// Send back the view HTML, with any provided variables completed in the associative array
-		public function buildOutput(?array $namedVariableArray = null, bool $conditionChecks = false): string {
+		public function buildOutputOld(?array $namedVariableArray = null, bool $conditionChecks = false): string {
 			$vars = [];
 			if ($namedVariableArray) {
 				foreach ($namedVariableArray AS $key => $val) {
