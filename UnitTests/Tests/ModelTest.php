@@ -55,12 +55,19 @@
 			self::assertNotEquals('Bob', $model2->firstName);
 		}
 
-		public function testSaveModelData(): void {
+		public function testModelData(): void {
+			$testVal = random_bytes(8);
+
 			$model = $this->createModel();
 			$data = new ModelData($model, 'key');
-			$data->value = 'hello world';
+			$data->value = $testVal;
 			$data->save();
 
 			$this->assertEquals(false,$data->isDirty());
+			$data = null;
+
+			$data2 = new ModelData($model, 'key');
+			$this->assertEquals($testVal, $data2->value->rawValue());
 		}
+
 	}
