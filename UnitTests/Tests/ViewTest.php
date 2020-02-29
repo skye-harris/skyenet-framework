@@ -32,6 +32,16 @@
 			$this->assertNotEquals('<span>X less than Y</span>', $testForFalse);
 		}
 
+		public function testConditionGreaterThan(): void {
+			$view = new \Skyenet\View\View('UnitTests/Views/ConditionGreaterThan');
+
+			$testForTrue = $view->buildOutput(['x' => 5, 'y' => 2], true);
+			$testForFalse = $view->buildOutput(['x' => 1, 'y' => 4], true);
+
+			$this->assertEquals('<span>X greater than Y</span>', $testForTrue);
+			$this->assertNotEquals('<span>X greater than Y</span>', $testForFalse);
+		}
+
 		public function testConditionNested(): void {
 			$view = new \Skyenet\View\View('UnitTests/Views/ConditionNested');
 
