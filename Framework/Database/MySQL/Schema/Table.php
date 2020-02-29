@@ -160,7 +160,7 @@
 		}
 
 		public function getCreateStatement(): string {
-			$output = "CREATE TABLE {$this->tableName} (";
+			$output = "CREATE TABLE `{$this->tableName}` (";
 
 			$columns = [];
 			foreach ($this->columnDefs AS $columnDef) {
@@ -168,7 +168,7 @@
 
 				$typeName = Column::MAP_TYPES_TO_NAMES[$columnDef->type] ?? null;
 				$columnArr = [
-					$columnDef->name,
+					"`{$columnDef->name}`",
 					$typeName . ($columnDef->size ? "({$columnDef->size})" : null)
 				];
 

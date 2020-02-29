@@ -11,7 +11,7 @@
 	use PHPUnit\Framework\TestCase;
 	use Skyenet\ManagedData;
 
-	class View extends TestCase {
+	class ViewTest extends TestCase {
 		public function testConditionEquals(): void {
 			$view = new \Skyenet\View\View('UnitTests/Views/ConditionEquals');
 
