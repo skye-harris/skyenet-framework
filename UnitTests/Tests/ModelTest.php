@@ -55,6 +55,21 @@
 			self::assertNotEquals('Bob', $model2->firstName);
 		}
 
+		public function testModelIterator(): void {
+			$models = [
+				$this->createModel()->getUuid(),
+				$this->createModel()->getUuid(),
+				$this->createModel()->getUuid(),
+			];
+
+			$iteratorModels = TestModel::LoadEx();
+			$this->assertCount(count($models), $iteratorModels);
+
+			foreach ($iteratorModels AS $testModel) {
+				$this->assertContains($testModel->getUuid(), $models);
+			}
+		}
+
 		public function testModelData(): void {
 			$testVal = random_bytes(8);
 
@@ -63,7 +78,7 @@
 			$data->value = $testVal;
 			$data->save();
 
-			$this->assertEquals(false,$data->isDirty());
+			$this->assertEquals(false, $data->isDirty());
 			$data = null;
 
 			$data2 = new ModelData($model, 'key');
