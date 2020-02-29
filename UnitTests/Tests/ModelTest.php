@@ -8,6 +8,7 @@
 
 	namespace UnitTests\Tests;
 
+	use Skyenet\Model\LoadException;
 	use Skyenet\Model\ModelData;
 	use UnitTests\Models\TestModel;
 	use UnitTests\UnitTest;
@@ -27,6 +28,20 @@
 
 			$allTestModels = TestModel::LoadEx();
 			$this->assertCount(1, $allTestModels);
+		}
+
+		public function testDeleteModel(): void {
+			$model = $this->createModel();
+			$modelUuid = $model->getUuid();
+
+			$model->delete();
+
+			$this->assertTrue($model->isNew());
+
+			$model = null;
+
+			$this->expectException(LoadException::class);
+			TestModel::LoadByUuid($modelUuid);
 		}
 
 		public function testLoadModelFromCache(): void {
