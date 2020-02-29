@@ -37,7 +37,7 @@
 			}
 
 			// Now test in our expected App/Views path
-			$filePath = "{$rootPath}/../App/Views/{$viewFileName}.html";
+			$filePath = "{$rootPath}/App/Views/{$viewFileName}.html";
 
 			if ($this->loadView($filePath)) {
 				return;
