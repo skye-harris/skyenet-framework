@@ -47,6 +47,8 @@
 			$result = $view->buildOutput(['x' => 2, 'y' => 2], true);
 			$this->assertEquals('<span>NEITHER == 1</span>', $result);
 
+			$result = $view->buildOutput(['x' => 2, 'y' => 2, 'z' => true], true);
+			$this->assertEquals('<span>NEITHER == 1 lol</span>', $result);
 		}
 
 		public function testVariableSubstitution(): void {

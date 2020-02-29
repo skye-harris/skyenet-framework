@@ -194,7 +194,7 @@
 			// Doing so last prevents placeholders or conditional tests being XSS'd into and then processed
 			$compiledString = strtr($compiledString, $vars);
 
-			return trim($compiledString);
+			return $compiledString;
 		}
 
 		// Send back the view HTML, with any provided variables completed in the associative array
