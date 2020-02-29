@@ -8,26 +8,29 @@
 
 	namespace UnitTests\Tests;
 
+	use Skyenet\Model\ModelData;
 	use UnitTests\Models\TestModel;
 	use UnitTests\UnitTest;
 
 	class ModelTest extends UnitTest {
-		public function testCreateModel(): void {
+		private function createModel(): TestModel {
 			$model = new TestModel();
 			$model->firstName = 'Hello';
 			$model->lastName = 'World';
 			$model->save();
+
+			return $model;
+		}
+
+		public function testCreateModel(): void {
+			$model = $this->createModel();
 
 			$allTestModels = TestModel::LoadEx();
 			$this->assertCount(1, $allTestModels);
 		}
 
 		public function testLoadModelFromCache(): void {
-			$model = new TestModel();
-			$model->firstName = 'Hello';
-			$model->lastName = 'World';
-			$model->save();
-
+			$model = $this->createModel();
 			$model->firstName = 'Bob';
 
 			$uuid = $model->getUuid();
@@ -38,10 +41,7 @@
 		}
 
 		public function testLoadModelNoCache(): void {
-			$model = new TestModel();
-			$model->firstName = 'Hello';
-			$model->lastName = 'World';
-			$model->save();
+			$model = $this->createModel();
 
 			$model->firstName = 'Bob';
 			$uuid = $model->getUuid();
@@ -55,4 +55,12 @@
 			self::assertNotEquals('Bob', $model2->firstName);
 		}
 
+		public function testSaveModelData(): void {
+			$model = $this->createModel();
+			$data = new ModelData($model, 'key');
+			$data->value = 'hello world';
+			$data->save();
+
+			$this->assertEquals(false,$data->isDirty());
+		}
 	}

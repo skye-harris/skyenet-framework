@@ -16,7 +16,6 @@
 	Skyenet::getInstance()->initFramework();
 
 	$sql = Connection::getInstance();
-	$sql->beginTransaction();
 
 	array_map(static function($input) {
 		if (stripos($input, '.php') !== FALSE) {

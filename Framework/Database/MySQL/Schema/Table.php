@@ -14,7 +14,7 @@
 	class Table {
 		private $tableName;
 
-		private $columnDefs = [];
+		private array $columnDefs = [];
 
 		public function __construct(string $tableName) {
 			$this->tableName = $tableName;
@@ -75,7 +75,7 @@
 			$this->tableName = $tableName;
 		}
 
-		public function addColumn(string $name, int $type, int $length = 0, $default = NULL, int $flags = 0): Table {
+		public function addColumn(string $name, int $type, int $length = 0, $default = NULL, int $flags = 0): self {
 			$columnDef = new Column();
 			$columnDef->name = $name;
 			$columnDef->type = $type;
@@ -89,7 +89,7 @@
 			return $this;
 		}
 
-		public function dropColumn(string $name): Table {
+		public function dropColumn(string $name): self {
 			if ($column = $this->columnDefs[$name] ?? null) {
 				/* @var $column Column */
 
@@ -100,7 +100,7 @@
 			return $this;
 		}
 
-		protected  function addColumnDef(Column $column): void {
+		protected function addColumnDef(Column $column): void {
 			$this->columnDefs[] = $column;
 		}
 
@@ -162,6 +162,7 @@
 		public function getCreateStatement(): string {
 			$output = "CREATE TABLE `{$this->tableName}` (";
 
+			$primaryKeys = [];
 			$columns = [];
 			foreach ($this->columnDefs AS $columnDef) {
 				/* @var $columnDef Column */
@@ -175,7 +176,11 @@
 				if ($columnDef->flags) {
 					foreach (Column::MAP_FLAG_STRINGS AS $key => $part) {
 						if ($columnDef->flags & $key) {
-							$columnArr[] = $part;
+							if ($key === Column::FLAG_PRI_KEY) {
+								$primaryKeys[] = $columnDef->name;
+							} else {
+								$columnArr[] = $part;
+							}
 						}
 					}
 				}
@@ -201,6 +206,14 @@
 				$columnDef->columnExists = true;
 				$columnDef->dirty = false;
 			}
+
+			if (count($primaryKeys)) {
+				$keys = array_map(static function($key) { return "`{$key}`"; }, $primaryKeys);
+				$keys = implode(', ',$keys);
+
+				$columns[] = "primary key ({$keys})";
+			}
+
 			$output .= implode(', ', array_filter($columns)) . ')';
 
 			return $output . ' ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;';

@@ -90,6 +90,7 @@
 						   ->execute();
 
 				$this->_isNew = false;
+				$this->_dirtyVars = [];
 				$res->Close();
 			} catch (QueryException $e) {
 				throw new SaveException("Failed to save object due to a MySQL\QueryException: {$e->getMessage()}", null, 0, $e);
