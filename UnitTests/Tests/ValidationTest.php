@@ -13,6 +13,20 @@
 	use UnitTests\UnitTest;
 
 	class ValidationTest extends UnitTest {
+		// Generic
+		public function testNullDataAllowed(): void {
+			$value = DataValidator::ForValue(null, true)
+								  ->value();
+
+			$this->assertNull($value);
+		}
+
+		public function testNullDataNotAllowed(): void {
+			$this->expectException(Exception::class);
+			DataValidator::ForValue(null, false)
+						 ->value();
+		}
+
 		// Dates
 		public function testValidDate(): void {
 			$date = '2012-12-23';
@@ -33,19 +47,6 @@
 			DataValidator::ForValue($date)
 						 ->date()
 						 ->valueArrayYMD();
-		}
-
-		public function testNullDataAllowed(): void {
-			$value = DataValidator::ForValue(null, true)
-								  ->value();
-
-			$this->assertNull($value);
-		}
-
-		public function testNullDataNotAllowed(): void {
-			$this->expectException(Exception::class);
-			DataValidator::ForValue(null, false)
-						 ->value();
 		}
 
 		// Integers

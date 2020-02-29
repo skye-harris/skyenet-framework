@@ -1,4 +1,5 @@
 <?php
+
 	namespace UnitTests\Models;
 
 	use Skyenet\ManagedData;
@@ -22,7 +23,8 @@
 	 * @method static TestModel LoadByUuid(string|ManagedData $uuid)
 	 * @method static TestModelIterator LoadEx(?string $whereString = null, ?array $whereVariables = null, ?string $orderBy = null, ?int $limit = null)
 	 * @method static TestModel LoadOne(?string $whereString = null, ?array $whereVariables = null, ?string $orderBy = null)
- */
+	 */
+
 	class TestModel extends Model {
 		public const EVENT_PRE_SAVE = 'TEST_MODEL:PRE_SAVE';
 		public const EVENT_POST_SAVE = 'TEST_MODEL:POST_SAVE';
@@ -35,5 +37,4 @@
 			'firstName' => null,
 			'lastName' => null,
 		];
-
 	}
