@@ -166,7 +166,41 @@
 
 			$this->assertIsObject($value);
 			$this->assertObjectHasAttribute('key', $value);
-			$this->assertEquals($object['key'],$value->key);
+			$this->assertEquals($object['key'], $value->key);
 		}
 
+		public function testInvalidJsonObject(): void {
+			$json = '{ key: {}';
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($json)
+						 ->jsonObject()
+						 ->value();
+		}
+
+		public function testValidJsonArray(): void {
+			$array = [1,2,3];
+
+			$json = json_encode($array, JSON_THROW_ON_ERROR, 512);
+
+			$value = DataValidator::ForValue($json)
+								  ->jsonArray()
+								  ->value();
+
+			$this->assertIsArray($value);
+			$this->assertCount(count($array), $value);
+		}
+
+		public function testInvalidJsonArray(): void {
+			$object = [
+				'key' => 'value'
+			];
+
+			$json = json_encode($object, JSON_THROW_ON_ERROR, 512);
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($json)
+						 ->jsonArray()
+						 ->value();
+		}
 	}
