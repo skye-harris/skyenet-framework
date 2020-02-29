@@ -14,17 +14,20 @@
 	use UnitTests\UnitTest;
 
 	class ModelTest extends UnitTest {
-		private function createModel(): TestModel {
-			$model = new TestModel();
-			$model->firstName = 'Hello';
-			$model->lastName = 'World';
+		private function createModel(array $fields = []): TestModel {
+			$modelFields = array_merge([
+				'firstName' => 'Hello',
+				'lastName' => 'World'
+			],$fields);
+
+			$model = new TestModel($modelFields);
 			$model->save();
 
 			return $model;
 		}
 
 		public function testCreateModel(): void {
-			$model = $this->createModel();
+			$this->createModel();
 
 			$allTestModels = TestModel::LoadEx();
 			$this->assertCount(1, $allTestModels);
