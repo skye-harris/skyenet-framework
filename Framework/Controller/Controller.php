@@ -15,6 +15,7 @@
 	use Skyenet\EventManager\Event;
 	use Skyenet\EventManager\EventManager;
 	use Skyenet\Http\UrlLoadable;
+	use Skyenet\ManagedData;
 	use Skyenet\Route\Route;
 	use Skyenet\Skyenet;
 
@@ -62,35 +63,39 @@
 						continue;
 					}
 
-					if ($paramType->isBuiltin()) {
-						// built-ins are passed-through directly
-						$output[] = $route->matchVars[$paramName];
-					} else {
-						// objects must implement UrlLoadable, so that we can load it and pass through to the function
-						$paramClass = $reflectionParameter->getClass();
-						if ($paramClass->implementsInterface(UrlLoadable::class)) {
-							try {
-								$loadMethod = $paramClass->getMethod('LoadFromRequestString');
 
-								$output[] = $loadMethod->invoke(null, $route->matchVars[$paramName]);
-							}
-								/** @noinspection PhpRedundantCatchClauseInspection */
-							catch (\Skyenet\Model\LoadException $exception) {
+					if ($reflectionParameter->hasType()) {
+						if ($paramType->isBuiltin()) {
+							// built-ins are passed-through directly
+							$output[] = $route->matchVars[$paramName];
+						} else {
+							// objects must implement UrlLoadable, so that we can load it and pass through to the function
+							$paramClass = $reflectionParameter->getClass();
+							if ($paramClass->implementsInterface(UrlLoadable::class)) {
+								try {
+									$loadMethod = $paramClass->getMethod('LoadFromRequestString');
+
+									$output[] = $loadMethod->invoke(null, $route->matchVars[$paramName]);
+								} /** @noinspection PhpRedundantCatchClauseInspection */
+								catch (\Skyenet\Model\LoadException $exception) {
+									if (!$reflectionParameter->allowsNull()) {
+										throw new LoadException("Failed to instantiate {$paramClass->getName()} for parameter {$paramName}", null, 0, $exception);
+									}
+
+									$output[] = null;
+								}
+							} else {
 								if (!$reflectionParameter->allowsNull()) {
-									throw new LoadException("Failed to instantiate {$paramClass->getName()} for parameter {$paramName}", null, 0, $exception);
+									$loadableClass = UrlLoadable::class;
+
+									throw new LoadException("Unable to instantiate class {$paramClass->getName()} for parameter {$paramName}: Object must implement {$loadableClass}");
 								}
 
 								$output[] = null;
 							}
-						} else {
-							if (!$reflectionParameter->allowsNull()) {
-								$loadableClass = UrlLoadable::class;
-
-								throw new LoadException("Unable to instantiate class {$paramClass->getName()} for parameter {$paramName}: Object must implement {$loadableClass}");
-							}
-
-							$output[] = null;
 						}
+					} else {
+						$output[] = new ManagedData($route->matchVars[$paramName]);
 					}
 				}
 			} catch (ReflectionException $e) {
