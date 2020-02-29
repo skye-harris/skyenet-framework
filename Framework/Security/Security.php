@@ -11,7 +11,8 @@
 		}
 
 		public static function IsDeveloper(): bool {
-			return (strpos($_SERVER['REMOTE_ADDR'], '192.168.1.') === 0);
+			//todo: fix
+			return PHP_SAPI === 'cli' || (strpos($_SERVER['REMOTE_ADDR'], '192.168.1.') === 0);
 		}
 
 		public static function DeveloperEcho($content): void {
@@ -100,6 +101,7 @@
 		 */
 		public static function GenerateCSRF(): string {
 			try {
+				// Todo: properly
 				return base64_encode(random_bytes(32));
 			} catch (\Exception $e) {
 				throw new Exception("random_bytes threw an \Exception: {$e->getMessage()}", null, 0, $e);
@@ -112,6 +114,8 @@
 		 * @throws InvalidCsrfTokenException
 		 */
 		public static function ValidateCSRF(): void {
+			if (PHP_SAPI === 'cli') return;
+
 			$headers = getallheaders();
 
 			if (!isset($headers['Csrf_Token'])) {

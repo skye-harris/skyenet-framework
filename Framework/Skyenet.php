@@ -27,7 +27,13 @@
 		public array $requestParts = [];
 		public array $requestVars = [];
 
-		public static array $CONFIG = [];
+		public static array $CONFIG = [
+			'DEFAULT_DATABASE_NAME' => null,
+			'DATABASE_HOST' => null,
+			'DATABASE_USER' => null,
+			'DATABASE_PASSWORD' => null,
+			'DEVELOPER_MODE' => true,
+		];
 
 		// set a redirect header and terminate immediately
 		public function redirectTo(string $url, int $responseCode = ResponseCodes::HTTP_MOVED_TEMPORARILY): void {
@@ -51,7 +57,8 @@
 			if (static::$CONFIG['DEVELOPER_MODE'] && Security::IsDeveloper()) {
 				header('Content-Type: text/html');
 
-				$headers = getallheaders();
+				$headers = (PHP_SAPI === 'cli') ? [] : getallheaders();
+
 				if (!isset($headers['Ajax'])) {
 					try {
 						$view = new View\View('Developer/UncaughtException');
@@ -161,7 +168,7 @@
 					$class = substr($class, 1);
 				}
 
-				$namespaces = ['Console','App'];
+				$namespaces = ['Console','App','UnitTests'];
 
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));

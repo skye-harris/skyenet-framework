@@ -20,7 +20,8 @@
     "ext-bcmath": "*",
     "ext-readline": "*",
     "ext-openssl": "*",
-    "ext-mysqli": "*"
+    "ext-mysqli": "*",
+    "phpunit/phpunit": "*"
   }
   ,
   "require-dev": {
