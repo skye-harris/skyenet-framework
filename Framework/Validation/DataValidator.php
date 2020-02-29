@@ -3,6 +3,7 @@
 	namespace Skyenet\Validation;
 
 	use JsonException;
+	use Skyenet\ManagedData;
 	use Skyenet\Skyenet;
 
 	class DataValidator {
@@ -300,7 +301,12 @@
 		 * @throws Exception
 		 */
 		public static function ForValue($value, bool $nullable = false, ?String $friendlyDesc = null): self {
+			if ($value instanceof ManagedData) {
+				$value = $value->rawValue();
+			}
+
 			$dataValidation = new self($value);
+
 			if ($friendlyDesc !== null) {
 				$dataValidation->varName = $friendlyDesc;
 			}
