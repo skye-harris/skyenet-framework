@@ -108,7 +108,7 @@
 		 */
 		public function prepareForRoute(Route $route): void {
 			// Broadcast our PRE_RUN event.. if we are returned false here, then bail-out
-			if (EventManager::BroadcastEvent($event = new Event(static::EVENT_PRE_RUN, $this, null, true))) {
+			if (EventManager::BroadcastEvent($event = new Event(static::EVENT_PRE_RUN, $this, $route, true))) {
 				throw new LoadException('Route invocation rejected due to a cancelled EVENT_PRE_RUN event', $event->getCancellationUserFriendlyMessage());
 			}
 
