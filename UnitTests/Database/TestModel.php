@@ -14,8 +14,9 @@
 	$sql->query('DROP TABLE IF EXISTS `TestModel`');
 
 	$table = new Table('TestModel');
-	$table->addColumn('uuid',Column::TYPE_BINARY, 16, NULL, Column::FLAG_PRI_KEY | Column::FLAG_NOT_NULL);
-	$table->addColumn('firstName',Column::TYPE_VARCHAR, 64);
-	$table->addColumn('lastName',Column::TYPE_VARCHAR, 64);
+	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY | Column::FLAG_NOT_NULL);
+	$table->string('firstName');
+	$table->string('lastName');
+	$table->create();
 
 	$result = $sql->query($table->getCreateStatement());

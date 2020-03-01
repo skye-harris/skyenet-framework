@@ -14,8 +14,7 @@
 	$sql->query('DROP TABLE IF EXISTS `ModelData`');
 
 	$table = new Table('ModelData');
-	$table->addColumn('uuid', Column::TYPE_BINARY, 16, NULL, Column::FLAG_NOT_NULL | Column::FLAG_PRI_KEY);
-	$table->addColumn('name', Column::TYPE_VARCHAR, 32, null, Column::FLAG_NOT_NULL | Column::FLAG_PRI_KEY);
-	$table->addColumn('value', Column::TYPE_BLOB);
-
-	$result = $sql->query($table->getCreateStatement());
+	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY | Column::FLAG_NOT_NULL);
+	$table->string('name');
+	$table->blob('value');
+	$table->create();

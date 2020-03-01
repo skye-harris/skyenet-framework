@@ -208,8 +208,10 @@
 			}
 
 			if (count($primaryKeys)) {
-				$keys = array_map(static function($key) { return "`{$key}`"; }, $primaryKeys);
-				$keys = implode(', ',$keys);
+				$keys = array_map(static function ($key) {
+					return "`{$key}`";
+				}, $primaryKeys);
+				$keys = implode(', ', $keys);
 
 				$columns[] = "primary key ({$keys})";
 			}
@@ -219,11 +221,67 @@
 			return $output . ' ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;';
 		}
 
+		/**
+		 * @throws \Skyenet\Database\MySQL\ConnectException
+		 * @throws \Skyenet\Database\MySQL\QueryException
+		 */
+		public function create(): void {
+			$sql = Connection::getInstance();
+
+			$sql->query($this->getCreateStatement());
+		}
+
 		// Reset the dirty flag on all column definitions
 		public function unDirty(): void {
 			foreach ($this->columnDefs AS $columnDef) {
 				/* @var $columnDef Column */
 				$columnDef->dirty = false;
 			}
+		}
+
+		protected function getFlags(bool $nullable, int $flags): int {
+			return $flags & ($nullable ? Column::FLAG_NOT_NULL : 0);
+		}
+
+		public function string(string $name, int $length = 255, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_VARCHAR, $length, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function integer(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_INTEGER, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function float(string $name, ?float $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_FLOAT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function boolean(string $name, ?bool $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_BOOL, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function binary(string $name, int $length, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_BINARY, $length, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function uuid(string $name, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->binary($name, 16, $default, $nullable, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function blob(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_BLOB, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
 		}
 	}
