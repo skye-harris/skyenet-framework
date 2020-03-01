@@ -6,15 +6,14 @@
 	 * Time: 5:31 pm
 	 */
 
-	use Skyenet\Database\MySQL\Connection;
 	use Skyenet\Database\MySQL\Schema\Column;
 	use Skyenet\Database\MySQL\Schema\Table;
 
-	$sql = Connection::getInstance();
-	$sql->query('DROP TABLE IF EXISTS `ModelData`');
-
 	$table = new Table('ModelData');
-	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY | Column::FLAG_NOT_NULL);
-	$table->string('name');
+	$table->dropIfExists();
+
+	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY);
+	$table->string('name', 255, null, false, Column::FLAG_PRI_KEY);
 	$table->blob('value');
+
 	$table->create();

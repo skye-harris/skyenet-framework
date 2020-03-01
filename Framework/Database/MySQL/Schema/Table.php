@@ -223,6 +223,12 @@
 			return $output . ' ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;';
 		}
 
+		public function dropIfExists(): void {
+			$sql = Connection::getInstance();
+
+			$sql->query("DROP TABLE IF EXISTS `{$this->tableName}`");
+		}
+
 		/**
 		 * @throws ConnectException
 		 * @throws QueryException
