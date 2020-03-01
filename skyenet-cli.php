@@ -1,28 +1,30 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Skye
- * Date: 5/10/2019
- * Time: 4:39 pm
- */
+	/**
+	 * Created by PhpStorm.
+	 * User: Skye
+	 * Date: 5/10/2019
+	 * Time: 4:39 pm
+	 */
 
-$vendorPaths = ['/vendor','/../../'];
-foreach ($vendorPaths AS $vendorPath) {
-	if (file_exists($vendorPath)) {
-		include_once __DIR__ . '/vendor/autoload.php';
+	$vendorPaths = ['/vendor','/../../'];
+	foreach ($vendorPaths AS $vendorPath) {
+		$vendorFile = __DIR__ . "{$vendorPath}/autoload.php";
 
-		break;
+		if (file_exists($vendorFile)) {
+			include_once $vendorFile;
+
+			break;
+		}
 	}
-}
 
-use CommandLine\CliController;
-use Skyenet\Skyenet;
+	use CommandLine\CliController;
+	use Skyenet\Skyenet;
 
-$app = Skyenet::getInstance();
+	$app = Skyenet::getInstance();
 
-/** @noinspection PhpUnhandledExceptionInspection */
+	/** @noinspection PhpUnhandledExceptionInspection */
 // Our uncaught exception handler will catch any exceptions that make it this far
-$app->initFramework();
+	$app->initFramework();
 
-$controller = new CliController();
-$controller->prepareForCli();
+	$controller = new CliController();
+	$controller->prepareForCli();
