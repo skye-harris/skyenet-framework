@@ -13,7 +13,7 @@
 	$table->dropIfExists();
 
 	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY);
-	$table->string('firstName');
-	$table->string('lastName');
+	$table->varchar('firstName');
+	$table->varchar('lastName');
 
 	$table->create();
