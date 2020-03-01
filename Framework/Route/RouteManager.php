@@ -18,10 +18,10 @@
 		public const PUT = 3;
 		public const DELETE = 4;
 
-		private array $getRoutes = [];
-		private array $postRoutes = [];
-		private array $putRoutes = [];
-		private array $delRoutes = [];
+		private ?array $getRoutes = [];
+		private ?array $postRoutes = [];
+		private ?array $putRoutes = [];
+		private ?array $delRoutes = [];
 
 		private bool $isFreed = false;
 
