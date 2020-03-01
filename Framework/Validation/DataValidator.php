@@ -8,7 +8,7 @@
 
 	class DataValidator {
 		protected $rawValue;
-		protected $varName = 'Provided data';
+		protected string $varName = 'Provided data';
 
 		public function value($default = null) {
 			return $this->rawValue ?? $default;
@@ -27,7 +27,7 @@
 					if ($json === null || !is_array($json)) {
 						throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON array");
 					}
-				} catch (JsonException $exception) {
+				} /** @noinspection PhpRedundantCatchClauseInspection */ catch (JsonException $exception) {
 					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON array", 0, $exception);
 				}
 
@@ -50,7 +50,7 @@
 					if ($json === null || !is_object($json)) {
 						throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON object");
 					}
-				} catch (JsonException $exception) {
+				} /** @noinspection PhpRedundantCatchClauseInspection */ catch (JsonException $exception) {
 					throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a valid JSON object", 0, $exception);
 				}
 
@@ -256,11 +256,11 @@
 		protected static function KeyFromArray(array $array, String $indexName, bool $nullable = false, ?String $friendlyDesc = null): self {
 			$varName = $friendlyDesc ?? $indexName;
 
-			if (!$nullable && !isset($_REQUEST[$indexName])) {
+			if (!$nullable && !isset($array[$indexName])) {
 				throw new Exception(null, "Value for {$varName} was not found");
 			}
 
-			$value = $_REQUEST[$indexName] ?? null;
+			$value = $array[$indexName] ?? null;
 			if ($value === null && !$nullable) {
 				throw new Exception(null, "{$varName} cannot be null");
 			}
