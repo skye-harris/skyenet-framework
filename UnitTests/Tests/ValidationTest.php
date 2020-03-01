@@ -28,7 +28,7 @@
 		}
 
 		// Dates
-		public function testValidDate(): void {
+		public function testDateIsValid(): void {
 			$date = '2012-12-23';
 
 			$value = DataValidator::ForValue($date)
@@ -40,7 +40,7 @@
 			$this->assertEquals(23, $value[2]);
 		}
 
-		public function testInvalidDate(): void {
+		public function testDateIsInvalid(): void {
 			$date = 'hello';
 
 			$this->expectException(Exception::class);
@@ -50,7 +50,7 @@
 		}
 
 		// Integers
-		public function testValidInteger(): void {
+		public function testIntegerIsValid(): void {
 			$int = 5;
 
 			$value = DataValidator::ForValue($int)
@@ -58,6 +58,15 @@
 								  ->value();
 
 			$this->assertEquals($value, $int);
+		}
+
+		public function testIntegerIsInvalid(): void {
+			$int = 7.5;
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($int)
+						 ->int(4, 6)
+						 ->value();
 		}
 
 		public function testIntegerWithinRange(): void {
@@ -88,17 +97,8 @@
 						 ->value();
 		}
 
-		public function testInvalidInteger(): void {
-			$int = 7.5;
-
-			$this->expectException(Exception::class);
-			DataValidator::ForValue($int)
-						 ->int(4, 6)
-						 ->value();
-		}
-
 		// Floats
-		public function testValidFloat(): void {
+		public function testFloatIsValid(): void {
 			$float = 5.5;
 
 			$value = DataValidator::ForValue($float)
@@ -137,7 +137,7 @@
 		}
 
 		// Strings
-		public function testValidEmailAddress(): void {
+		public function testStringValidEmailAddress(): void {
 			$email = 'alias+test@email.domain.com';
 
 			$value = DataValidator::ForValue($email)
@@ -148,7 +148,7 @@
 			$this->assertEquals($value, $email);
 		}
 
-		public function testInvalidEmailAddress(): void {
+		public function testStringInvalidEmailAddress(): void {
 			$email = '@email.';
 
 			$this->expectException(Exception::class);
@@ -158,7 +158,7 @@
 						 ->value();
 		}
 
-		public function testRegexValidationSuccess(): void {
+		public function testStringRegexValidationSuccess(): void {
 			$input = 'hello WORLD';
 
 			$value = DataValidator::ForValue($input)
@@ -168,10 +168,10 @@
 
 			$this->assertEquals($value, $input);
 			$this->assertCount(3, $matches);
-			$this->assertEquals('WORLD',$matches[2]);
+			$this->assertEquals('WORLD', $matches[2]);
 		}
 
-		public function testRegexValidationFailure(): void {
+		public function testStringRegexValidationFailure(): void {
 			$input = 'hellO WORLD';
 
 			$this->expectException(Exception::class);
@@ -181,8 +181,37 @@
 						 ->value();
 		}
 
+		public function testStringLengthWithinRange(): void {
+			$string = 'hello world';
+
+			$value = DataValidator::ForValue($string)
+								  ->string(10, 12)
+								  ->value();
+
+			$this->assertEquals($string, $value);
+		}
+
+		public function testStringLengthBelowRange(): void {
+			$string = 'hello world';
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($string)
+						 ->string(18, 20)
+						 ->value();
+		}
+
+		public function testStringLengthAboveRange(): void {
+			$string = 'hello world';
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($string)
+						 ->string(2, 4)
+						 ->value();
+		}
+
+
 		// JSON Objects
-		public function testValidJsonObject(): void {
+		public function testJsonObjectIsValid(): void {
 			$object = [
 				'key' => 'val'
 			];
@@ -198,7 +227,7 @@
 			$this->assertEquals($object['key'], $value->key);
 		}
 
-		public function testInvalidJsonObject(): void {
+		public function testJsonObjectIsInvalid(): void {
 			$json = '{ key: {}';
 
 			$this->expectException(Exception::class);
@@ -208,7 +237,7 @@
 		}
 
 		// JSON Arrays
-		public function testValidJsonArray(): void {
+		public function testJsonArrayIsValid(): void {
 			$array = [1, 2, 3];
 
 			$json = json_encode($array, JSON_THROW_ON_ERROR, 512);
@@ -221,7 +250,7 @@
 			$this->assertCount(count($array), $value);
 		}
 
-		public function testInvalidJsonArray(): void {
+		public function testJsonArrayIsInvalid(): void {
 			$object = [
 				'key' => 'value'
 			];
