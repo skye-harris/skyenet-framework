@@ -9,8 +9,8 @@
 	namespace Skyenet\Validation;
 
 	class StringArrayValidator implements ValidationCallback {
-		private int $min;
-		private int $max;
+		private ?int $min;
+		private ?int $max;
 		private bool $trim;
 		private ?String $customErrorMessage = null;
 

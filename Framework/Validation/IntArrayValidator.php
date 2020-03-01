@@ -9,8 +9,8 @@
 	namespace Skyenet\Validation;
 
 	class IntArrayValidator implements ValidationCallback {
-		protected int $min;
-		protected int $max;
+		protected ?int $min;
+		protected ?int $max;
 		protected ?string $customErrorMessage = null;
 
 		public function __construct(?int $minLength = null, ?int $maxLength = null, ?string $customErrorMessage = null) {
