@@ -202,11 +202,13 @@
 		 * @throws Exception
 		 */
 		public function bool(?string $customErrorMessage = null): BoolDataValidator {
-			if ($this->rawValue !== null && filter_var($this->rawValue, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
+			$filterValue = filter_var($this->rawValue, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+
+			if ($this->rawValue !== null && $filterValue === null) {
 				throw new Exception(null, $customErrorMessage ?? "{$this->varName} must be a boolean");
 			}
 
-			$this->rawValue = $this->rawValue === null ? null : (bool)$this->rawValue;
+			$this->rawValue = $this->rawValue === null ? null : $filterValue;
 
 			return new BoolDataValidator($this->rawValue, $this->varName);
 		}

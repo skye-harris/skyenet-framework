@@ -27,6 +27,39 @@
 						 ->value();
 		}
 
+		// Booleans
+
+		public function testBoolIsValid(): void {
+			$trueVals = ['yes', 'on', 'true', '1', 1];
+
+			foreach ($trueVals AS $trueVal) {
+				$value = DataValidator::ForValue($trueVal)
+									  ->bool()
+									  ->value();
+
+				$this->assertTrue($value);
+			}
+
+			$falseVals = ['no', 'off', 'false', '0', 0];
+
+			foreach ($falseVals AS $falseVal) {
+				$value = DataValidator::ForValue($falseVal)
+									  ->bool()
+									  ->value();
+
+				$this->assertFalse($value);
+			}
+		}
+
+		public function testBoolIsInvalid(): void {
+			$notBool = 'hello';
+
+			$this->expectException(Exception::class);
+			DataValidator::ForValue($notBool)
+						 ->bool()
+						 ->value();
+		}
+
 		// Dates
 		public function testDateIsValid(): void {
 			$date = '2012-12-23';
@@ -208,7 +241,6 @@
 						 ->string(2, 4)
 						 ->value();
 		}
-
 
 		// JSON Objects
 		public function testJsonObjectIsValid(): void {
