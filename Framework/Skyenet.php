@@ -93,7 +93,7 @@
 				} else {
 					$userMessage = ($ex instanceof Exception) ? $ex->getUserFriendlyMessage() : null;
 					$ajaxResponse = new AjaxResponse();
-					$ajaxResponse->setMessage(($userMessage ? ($userMessage.'<br>') : null) . $ex->getMessage());
+					$ajaxResponse->setMessage(($userMessage ? ($userMessage . '<br>') : null) . $ex->getMessage());
 
 					echo $ajaxResponse;
 				}
@@ -168,12 +168,12 @@
 					$class = substr($class, 1);
 				}
 
-				$namespaces = ['Console','App','UnitTests'];
+				$namespaces = ['Console', 'App', 'UnitTests', 'CommandLine'];
 
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));
 
-				if (!in_array($primaryNamespace, $namespaces,true)) {
+				if (!in_array($primaryNamespace, $namespaces, true)) {
 					return false;
 				}
 
@@ -212,30 +212,25 @@
 		}
 
 		/**
-		 * @param Controller|null $forcedController
 		 * @throws Exception
 		 */
-		public function start(?Controller $forcedController = null): void {
+		public function start(): void {
 			$this->init();
 
 			// Attempt to instantiate the requested pages controller
 			try {
-				if ($forcedController) {
-					$forcedController->prepareForRoute(null);
-				} else {
-					// Break apart the request URI
-					$urlParts = parse_url($_SERVER['REQUEST_URI']);
-					$urlParts = explode('/', $urlParts['path']);
-					$this->requestParts = array_filter(array_slice($urlParts, 1),
-						static function ($input) {
-							return (bool)strlen($input);
-						}
-					);
+				// Break apart the request URI
+				$urlParts = parse_url($_SERVER['REQUEST_URI']);
+				$urlParts = explode('/', $urlParts['path']);
+				$this->requestParts = array_filter(array_slice($urlParts, 1),
+					static function ($input) {
+						return (bool)strlen($input);
+					}
+				);
 
-					$this->discoverAndExecuteRoute();
-				}
+				$this->discoverAndExecuteRoute();
 			} catch (LoadException $e) {
-				throw new Exception("Failed to load Controller class due to a Controller\\LoadException {$e->getMessage()}",null,0,$e);
+				throw new Exception("Failed to load Controller class due to a Controller\\LoadException {$e->getMessage()}", null, 0, $e);
 			}
 
 			@ob_end_flush();
