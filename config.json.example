@@ -1,0 +1,10 @@
+{
+  "DATABASE_HOST": "localhost",
+  "DATABASE_DEFAULT_NAME": "",
+  "DATABASE_USER": "",
+  "DATABASE_PASSWORD": "",
+  "DATABASE_ENCRYPTION_PASSPHRASE": "",
+  "SITE_TITLE": "Skyenet",
+  "SERVER_MAC": "AB:CD:EF:12:34:56",
+  "DEVELOPER_MODE": true
+}
