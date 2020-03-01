@@ -6,7 +6,14 @@
  * Time: 4:39 pm
  */
 
-include_once __DIR__ . '/vendor/autoload.php';
+$vendorPaths = ['/vendor','/../../'];
+foreach ($vendorPaths AS $vendorPath) {
+	if (file_exists($vendorPath)) {
+		include_once __DIR__ . '/vendor/autoload.php';
+
+		break;
+	}
+}
 
 use CommandLine\CliController;
 use Skyenet\Skyenet;

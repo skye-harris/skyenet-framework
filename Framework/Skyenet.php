@@ -169,6 +169,7 @@
 				}
 
 				$namespaces = ['Console', 'App', 'UnitTests', 'CommandLine'];
+				$searchPaths = [$self->rootPath(), __DIR__.'/..'];
 
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));
@@ -177,13 +178,15 @@
 					return false;
 				}
 
-				$testPath = "{$self->rootPath()}/{$classPath}.php";
+				foreach ($searchPaths AS $searchPath) {
+					$testPath = "{$searchPath}/{$classPath}.php";
 
-				if (file_exists($testPath)) {
-					/** @noinspection PhpIncludeInspection */
-					require $testPath;
+					if (file_exists($testPath)) {
+						/** @noinspection PhpIncludeInspection */
+						require $testPath;
 
-					return true;
+						return true;
+					}
 				}
 
 				return false;
