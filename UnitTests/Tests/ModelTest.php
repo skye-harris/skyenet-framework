@@ -12,6 +12,7 @@
 	use Skyenet\Model\ModelData;
 	use UnitTests\Models\TestModel;
 	use UnitTests\UnitTest;
+	use WeakReference;
 
 	class ModelTest extends UnitTest {
 		private function createModel(array $fields = []): TestModel {
@@ -64,7 +65,7 @@
 			$model->firstName = 'Bob';
 			$uuid = $model->getUuid();
 
-			$weakRef = \WeakReference::create($model);
+			$weakRef = WeakReference::create($model);
 			$model = null;
 
 			$model2 = TestModel::LoadByUuid($uuid);

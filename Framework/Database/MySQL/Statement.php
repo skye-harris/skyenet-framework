@@ -13,10 +13,7 @@
 	use Skyenet\ManagedData;
 
 	class Statement {
-		/**
-		 * @var mysqli_stmt $statement
-		 */
-		private $statement;
+		private ?mysqli_stmt $statement = null;
 
 		/**
 		 * @param Mysqli $sqlConnection

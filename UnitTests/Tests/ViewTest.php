@@ -10,10 +10,11 @@
 
 	use PHPUnit\Framework\TestCase;
 	use Skyenet\ManagedData;
+	use Skyenet\View\View;
 
 	class ViewTest extends TestCase {
 		public function testConditionEquals(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/ConditionEquals');
+			$view = new View('UnitTests/Views/ConditionEquals');
 
 			$testForTrue = $view->buildOutput(['x' => 1], true);
 			$testForFalse = $view->buildOutput(['x' => 5], true);
@@ -23,7 +24,7 @@
 		}
 
 		public function testConditionLessThan(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/ConditionLessThan');
+			$view = new View('UnitTests/Views/ConditionLessThan');
 
 			$testForTrue = $view->buildOutput(['x' => 1, 'y' => 2], true);
 			$testForFalse = $view->buildOutput(['x' => 5, 'y' => 4], true);
@@ -33,7 +34,7 @@
 		}
 
 		public function testConditionGreaterThan(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/ConditionGreaterThan');
+			$view = new View('UnitTests/Views/ConditionGreaterThan');
 
 			$testForTrue = $view->buildOutput(['x' => 5, 'y' => 2], true);
 			$testForFalse = $view->buildOutput(['x' => 1, 'y' => 4], true);
@@ -43,7 +44,7 @@
 		}
 
 		public function testConditionNested(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/ConditionNested');
+			$view = new View('UnitTests/Views/ConditionNested');
 
 			$result = $view->buildOutput(['x' => 1, 'y' => 1], true);
 			$this->assertEquals('<span>X AND Y == 1</span>', $result);
@@ -62,13 +63,13 @@
 		}
 
 		public function testVariableSubstitution(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/VariableSubstitutionTest');
+			$view = new View('UnitTests/Views/VariableSubstitutionTest');
 
 			$this->assertEquals('<span>hello world</span>', $view->buildOutput(['x' => 'hello world']));
 		}
 
 		public function testVariableSubstitutionManagedData(): void {
-			$view = new \Skyenet\View\View('UnitTests/Views/VariableSubstitutionTest');
+			$view = new View('UnitTests/Views/VariableSubstitutionTest');
 
 			$htmlContent = '<i>TEST</i>';
 			$data = new ManagedData($htmlContent);

@@ -8,9 +8,10 @@
 
 	namespace UnitTests\Controller;
 
+	use Skyenet\Controller\Controller;
 	use UnitTests\Models\TestModel;
 
-	class TestableController extends \Skyenet\Controller\Controller {
+	class TestableController extends Controller {
 		public function InstantiateInteger(int $id): void {
 
 		}

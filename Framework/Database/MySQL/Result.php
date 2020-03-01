@@ -23,7 +23,7 @@
 
 		private array $fieldNames = [];
 
-		private ?mysqli_stmt $sqlStatement;
+		private ?mysqli_stmt $sqlStatement = null;
 		private array $rowContent = [];
 
 		public function result_metadata(): mysqli_result {

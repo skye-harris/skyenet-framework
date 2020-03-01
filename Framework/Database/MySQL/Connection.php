@@ -19,6 +19,7 @@
 			if (static::$instance === null) {
 				static::$instance = new static($databaseName);
 			} else if ($databaseName) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				static::$instance->setDatabase($databaseName);
 			}
 
@@ -47,11 +48,8 @@
 
 		// End Singleton stuff
 
-		protected $dbName = '';
-		/**
-		 * @var mysqli $mysqli
-		 */
-		protected $mysqli;
+		protected string $dbName = '';
+		protected ?mysqli $mysqli = null;
 
 		protected bool $inTransaction = false;
 

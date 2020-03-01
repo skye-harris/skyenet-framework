@@ -9,9 +9,9 @@
 	namespace Skyenet\Validation;
 
 	class DateDataValidator extends TypeDataValidator {
-		private ?int $day;
-		private ?int $month;
-		private ?int $year;
+		private ?int $day = null;
+		private ?int $month = null;
+		private ?int $year = null;
 
 		//todo: ideally this should use the rawValue property
 		public function __construct(?int $day, ?int $month, ?int $year, string $varName) {

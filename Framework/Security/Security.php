@@ -114,7 +114,9 @@
 		 * @throws InvalidCsrfTokenException
 		 */
 		public static function ValidateCSRF(): void {
-			if (PHP_SAPI === 'cli') return;
+			if (PHP_SAPI === 'cli') {
+				return;
+			}
 
 			$headers = getallheaders();
 

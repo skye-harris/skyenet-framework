@@ -18,12 +18,12 @@
 		public const PUT = 3;
 		public const DELETE = 4;
 
-		private $getRoutes = [];
-		private $postRoutes = [];
-		private $putRoutes = [];
-		private $delRoutes = [];
+		private array $getRoutes = [];
+		private array $postRoutes = [];
+		private array $putRoutes = [];
+		private array $delRoutes = [];
 
-		private $isFreed = false;
+		private bool $isFreed = false;
 
 		public function free(): void {
 			$this->getRoutes = $this->postRoutes = $this->putRoutes = $this->delRoutes = null;

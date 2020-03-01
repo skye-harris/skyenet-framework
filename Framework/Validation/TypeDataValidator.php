@@ -10,7 +10,7 @@
 
 	abstract class TypeDataValidator {
 		protected $rawValue;
-		protected $varName = 'Provided data';
+		protected string $varName = 'Provided data';
 
 		public function __construct($rawValue, string $varName) {
 			$this->rawValue = $rawValue;
