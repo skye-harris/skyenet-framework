@@ -12,7 +12,7 @@
 	use Skyenet\Database\MySQL\Exception;
 
 	class Table {
-		private $tableName;
+		private string $tableName;
 
 		private array $columnDefs = [];
 

@@ -9,15 +9,15 @@
 	namespace Skyenet\Database\MySQL\Schema;
 
 	class Column {
-		public $name;
-		public $type;
-		public $size;
-		public $default;
-		public $flags;
+		public string $name;
+		public int $type;
+		public int $size;
+		public ?string $default;
+		public int $flags;
 
-		public $columnExists = false;
-		public $drop = false;
-		public $dirty = false;
+		public bool $columnExists = false;
+		public bool $drop = false;
+		public bool $dirty = false;
 
 		public const TYPE_TINYINT = 2;
 		public const TYPE_BOOL = 3;
