@@ -89,7 +89,7 @@
 				[$relatedClass, $relationKey] = $oneToMany;
 
 				/** @var Model $relatedClass */
-				return $this->_toManyCache[$name] ??= $relatedClass::LoadEx("{$relationKey}=UNHEX(?)", [$this->_uuid]);
+				return $this->_toManyCache[$name] ??= $relatedClass::LoadEx("`{$relationKey}`=UNHEX(?)", [$this->_uuid]);
 			}
 
 			throw new Exception("No method to invoke with name '{$name}'");
@@ -194,7 +194,7 @@
 				}
 
 				/** @noinspection SqlResolve */
-				$res = $sql->prepareStatement("DELETE FROM `{$this::TableName()}` WHERE uuid=UNHEX(?) LIMIT 1")
+				$res = $sql->prepareStatement("DELETE FROM `{$this::TableName()}` WHERE `uuid`=UNHEX(?) LIMIT 1")
 						   ->bindParams($this->_uuid)
 						   ->execute();
 
@@ -312,7 +312,7 @@
 
 			try {
 				/** @noinspection SqlResolve */
-				$res = $sql->query("SELECT * FROM {$this::TableName()} WHERE uuid=? LIMIT 1 FOR UPDATE;", $binaryUuid);
+				$res = $sql->query("SELECT * FROM `{$this::TableName()}` WHERE `uuid`=? LIMIT 1 FOR UPDATE;", $binaryUuid);
 			} catch (QueryException $e) {
 				$myClass = static::class;
 				throw new LoadException("Failed to load {$myClass} due to a MySQL\\QueryException", null, 0, $e);
