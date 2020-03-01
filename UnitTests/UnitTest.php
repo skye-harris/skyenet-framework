@@ -11,6 +11,7 @@
 	use Skyenet\Database\MySQL\Connection;
 
 	abstract class UnitTest extends TestCase {
+
 		protected function setUp(): void {
 			parent::setUp();
 
