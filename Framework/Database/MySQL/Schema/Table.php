@@ -8,8 +8,10 @@
 
 	namespace Skyenet\Database\MySQL\Schema;
 
+	use Skyenet\Database\MySQL\ConnectException;
 	use Skyenet\Database\MySQL\Connection;
 	use Skyenet\Database\MySQL\Exception;
+	use Skyenet\Database\MySQL\QueryException;
 
 	class Table {
 		private string $tableName;
@@ -222,8 +224,8 @@
 		}
 
 		/**
-		 * @throws \Skyenet\Database\MySQL\ConnectException
-		 * @throws \Skyenet\Database\MySQL\QueryException
+		 * @throws ConnectException
+		 * @throws QueryException
 		 */
 		public function create(): void {
 			$sql = Connection::getInstance();
