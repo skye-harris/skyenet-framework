@@ -251,14 +251,62 @@
 			return $flags & ($nullable ? Column::FLAG_NOT_NULL : 0);
 		}
 
-		public function string(string $name, int $length = 255, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+		public function varchar(string $name, int $length = 255, ?string $default = null, bool $nullable = true, int $flags = 0): self {
 			$this->addColumn($name, Column::TYPE_VARCHAR, $length, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function char(string $name, int $length = 255, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_CHAR, $length, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function text(string $name, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_TEXT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function tinyText(string $name, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_TINYTEXT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function mediumText(string $name, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_MEDIUMTEXT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function longText(string $name, ?string $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_LONGTEXT, 0, $default, $this->getFlags($nullable, $flags));
 
 			return $this;
 		}
 
 		public function integer(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
 			$this->addColumn($name, Column::TYPE_INTEGER, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function bigInteger(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_BIGINT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function mediumInteger(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_MEDIUMINT, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function smallInteger(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
+			$this->addColumn($name, Column::TYPE_SMALLINT, 0, $default, $this->getFlags($nullable, $flags));
 
 			return $this;
 		}
