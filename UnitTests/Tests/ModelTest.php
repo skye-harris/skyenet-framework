@@ -122,10 +122,11 @@
 		public function testModelRelations(): void {
 			$model1 = $this->createTestModel(['firstName' => 'Bob']);
 			$model2 = $this->createTestModel(['firstName' => 'Alice']);
+			$relationCount = 3;
 
 			/** @var TestModel $model */
 			foreach ([$model1,$model2] AS $model) {
-				for ($i=0;$i<5;$i++) {
+				for ($i=0;$i<$relationCount;$i++) {
 					$this->createSecondModel([
 						'data' => "{$model->firstName} Relation",
 						'testModelUuid' => $model->getUuid(true)
@@ -136,7 +137,7 @@
 			/** @var TestModel $model */
 			foreach ([$model1,$model2] AS $model) {
 				$relations = $model->secondModels();
-				$this->assertCount(5, $relations);
+				$this->assertCount($relationCount, $relations);
 
 				foreach ($relations AS $relation) {
 					$parentModel = $relation->parentTestModel();
