@@ -19,6 +19,7 @@
 	 *
 	 * @property ManagedData $firstName
 	 * @property ManagedData $lastName
+	 * @method SecondModelIterator secondModels()
 	 *
 	 * @method static TestModel LoadByUuid(string|ManagedData $uuid)
 	 * @method static TestModelIterator LoadEx(?string $whereString = null, ?array $whereVariables = null, ?string $orderBy = null, ?int $limit = null)
@@ -36,5 +37,9 @@
 		protected array $_variableMap = [
 			'firstName' => null,
 			'lastName' => null,
+		];
+
+		public const _oneToMany = [
+			'secondModels' => [SecondModel::class, 'testModelUuid'],
 		];
 	}

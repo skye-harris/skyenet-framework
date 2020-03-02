@@ -14,6 +14,8 @@
 
 	class Statement {
 		private ?mysqli_stmt $statement = null;
+		private string $query;
+		private ?array $bindings = null;
 
 		/**
 		 * @param Mysqli $sqlConnection
@@ -22,6 +24,7 @@
 		 */
 		public function __construct(mysqli $sqlConnection, string $query) {
 			$this->statement = $sqlConnection->prepare($query);
+			$this->query = $query;
 
 			if ($this->statement === FALSE) {
 				throw new QueryException("SQL Statement failed to compile: '{$query}', {$sqlConnection->error}");
@@ -29,6 +32,8 @@
 		}
 
 		private function bindArray(string $types, array $params): Statement {
+			$this->bindings = $params;
+
 			$refParams = [];
 			$refParams[] = &$types;
 

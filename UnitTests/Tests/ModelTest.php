@@ -8,14 +8,16 @@
 
 	namespace UnitTests\Tests;
 
+	use Skyenet\Database\MySQL\Connection;
 	use Skyenet\Model\LoadException;
 	use Skyenet\Model\ModelData;
+	use UnitTests\Models\SecondModel;
 	use UnitTests\Models\TestModel;
 	use UnitTests\UnitTest;
 	use WeakReference;
 
 	class ModelTest extends UnitTest {
-		private function createModel(array $fields = []): TestModel {
+		private function createTestModel(array $fields = []): TestModel {
 			$modelFields = array_merge([
 				'firstName' => 'Hello',
 				'lastName' => 'World'
@@ -27,15 +29,28 @@
 			return $model;
 		}
 
+		private function createSecondModel(array $fields = []): SecondModel {
+			$modelFields = array_merge([
+				'firstName' => 'Hello',
+				'lastName' => 'World'
+			],$fields);
+
+			$model = new SecondModel($modelFields);
+			$model->save();
+
+			return $model;
+		}
+
+
 		public function testCreateModel(): void {
-			$this->createModel();
+			$this->createTestModel();
 
 			$allTestModels = TestModel::LoadEx();
 			$this->assertCount(1, $allTestModels);
 		}
 
 		public function testDeleteModel(): void {
-			$model = $this->createModel();
+			$model = $this->createTestModel();
 			$modelUuid = $model->getUuid();
 
 			$model->delete();
@@ -49,7 +64,7 @@
 		}
 
 		public function testLoadModelFromCache(): void {
-			$model = $this->createModel();
+			$model = $this->createTestModel();
 			$model->firstName = 'Bob';
 
 			$uuid = $model->getUuid();
@@ -60,7 +75,7 @@
 		}
 
 		public function testLoadModelNoCache(): void {
-			$model = $this->createModel();
+			$model = $this->createTestModel();
 
 			$model->firstName = 'Bob';
 			$uuid = $model->getUuid();
@@ -76,9 +91,9 @@
 
 		public function testModelIterator(): void {
 			$models = [
-				$this->createModel()->getUuid(),
-				$this->createModel()->getUuid(),
-				$this->createModel()->getUuid(),
+				$this->createTestModel()->getUuid(),
+				$this->createTestModel()->getUuid(),
+				$this->createTestModel()->getUuid(),
 			];
 
 			$iteratorModels = TestModel::LoadEx();
@@ -92,7 +107,7 @@
 		public function testModelData(): void {
 			$testVal = random_bytes(8);
 
-			$model = $this->createModel();
+			$model = $this->createTestModel();
 			$data = new ModelData($model, 'key');
 			$data->value = $testVal;
 			$data->save();
@@ -102,6 +117,35 @@
 
 			$data2 = new ModelData($model, 'key');
 			$this->assertEquals($testVal, $data2->value->rawValue());
+		}
+
+		public function testModelRelations(): void {
+			$model1 = $this->createTestModel(['firstName' => 'Bob']);
+			$model2 = $this->createTestModel(['firstName' => 'Alice']);
+
+			/** @var TestModel $model */
+			foreach ([$model1,$model2] AS $model) {
+				for ($i=0;$i<5;$i++) {
+					$this->createSecondModel([
+						'data' => "{$model->firstName} Relation",
+						'testModelUuid' => $model->getUuid(true)
+					]);
+				}
+			}
+
+			/** @var TestModel $model */
+			foreach ([$model1,$model2] AS $model) {
+				$relations = $model->secondModels();
+				$this->assertCount(5, $relations);
+
+				foreach ($relations AS $relation) {
+					$parentModel = $relation->parentTestModel();
+
+					// model will be loaded from cache, so it will be the same instance
+					$this->assertSame($model, $parentModel);
+					$this->assertEquals("{$parentModel->firstName} Relation", $relation->data->rawValue());
+				}
+			}
 		}
 
 	}
