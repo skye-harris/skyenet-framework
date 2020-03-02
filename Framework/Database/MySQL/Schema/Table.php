@@ -18,6 +18,8 @@
 
 		private array $columnDefs = [];
 
+		private array $indexes = [];
+
 		public function __construct(string $tableName) {
 			$this->tableName = $tableName;
 		}
@@ -218,6 +220,18 @@
 				$columns[] = "primary key ({$keys})";
 			}
 
+			if (count($this->indexes)) {
+				//INDEX `uuid2Index` (`uuid2`)
+				foreach ($this->indexes AS $name => $fields) {
+					$indexFields = array_map(static function ($key) {
+						return "`{$key}`";
+					}, $fields);
+					$indexFields = implode(', ', $indexFields);
+
+					$columns[] = "INDEX `{$name}` ({$indexFields})";
+				}
+			}
+
 			$output .= implode(', ', array_filter($columns)) . ')';
 
 			return $output . ' ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=COMPACT;';
@@ -236,7 +250,8 @@
 		public function create(): void {
 			$sql = Connection::getInstance();
 
-			$sql->query($this->getCreateStatement());
+			$createStatement = $this->getCreateStatement();
+			$sql->query($createStatement);
 		}
 
 		// Reset the dirty flag on all column definitions
@@ -248,7 +263,9 @@
 		}
 
 		protected function getFlags(bool $nullable, int $flags): int {
-			return $flags & ($nullable ? Column::FLAG_NOT_NULL : 0);
+			$outFlags = $flags | (!$nullable ? Column::FLAG_NOT_NULL : 0);
+
+			return $outFlags;
 		}
 
 		public function varchar(string $name, int $length = 255, ?string $default = null, bool $nullable = true, int $flags = 0): self {
@@ -337,6 +354,12 @@
 
 		public function blob(string $name, ?int $default = null, bool $nullable = true, int $flags = 0): self {
 			$this->addColumn($name, Column::TYPE_BLOB, 0, $default, $this->getFlags($nullable, $flags));
+
+			return $this;
+		}
+
+		public function index(string $name, string ...$fields): self {
+			$this->indexes[$name] = $fields;
 
 			return $this;
 		}
