@@ -8,7 +8,6 @@
 
 	namespace UnitTests\Tests;
 
-	use Skyenet\Database\MySQL\Connection;
 	use Skyenet\Model\LoadException;
 	use Skyenet\Model\ModelData;
 	use UnitTests\Models\SecondModel;
@@ -41,7 +40,6 @@
 			return $model;
 		}
 
-
 		public function testCreateModel(): void {
 			$this->createTestModel();
 
@@ -52,13 +50,11 @@
 		public function testDeleteModel(): void {
 			$model = $this->createTestModel();
 			$modelUuid = $model->getUuid();
-
 			$model->delete();
 
 			$this->assertTrue($model->isNew());
 
 			$model = null;
-
 			$this->expectException(LoadException::class);
 			TestModel::LoadByUuid($modelUuid);
 		}
