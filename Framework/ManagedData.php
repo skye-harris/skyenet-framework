@@ -11,6 +11,7 @@
 
 	use JsonSerializable;
 	use Skyenet\Http\UrlLoadable;
+	use Skyenet\Security\Security;
 
 	class ManagedData implements JsonSerializable, UrlLoadable {
 		private $data;
@@ -58,7 +59,7 @@
 		}
 
 		public function htmlSafe(): string {
-			return htmlentities($this->data, ENT_QUOTES);
+			return Security::HTMLEntities($this->data);
 		}
 
 		public function strlen(): int {
