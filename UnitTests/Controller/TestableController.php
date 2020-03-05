@@ -19,4 +19,12 @@
 		public function InstantiateModel(TestModel $model): void {
 
 		}
+
+		public function ParameterWithoutTypeDefinition($param): void {
+
+		}
+
+		public function UnmatchedVariable(int $param1, int $param2):void {
+
+		}
 	}

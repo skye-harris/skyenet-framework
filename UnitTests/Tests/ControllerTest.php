@@ -9,6 +9,7 @@
 	namespace UnitTests\Tests;
 
 	use Skyenet\Controller\Controller;
+	use Skyenet\Controller\LoadException;
 	use Skyenet\Route\Route;
 	use Skyenet\Route\RouteManager;
 	use UnitTests\Controller\TestableController;
@@ -56,5 +57,25 @@
 			$this->assertIsObject($params[0]);
 			$this->assertSame(get_class($params[0]), TestModel::class);
 			$this->assertEquals($modelUuid,$params[0]->getUuid());
+		}
+
+		public function testParameterWithoutTypeDefinition(): void {
+			$controller = Controller::LoadController(TestableController::class);
+
+			$this->createTestRoute('/$param', 'ParameterWithoutTypeDefinition');
+			$route = $this->findRoute('/hello world');
+
+			$this->expectException(LoadException::class);
+			$controller->instantiateParametersForRoute($route);
+		}
+
+		public function testUnmatchedVariable(): void {
+			$controller = Controller::LoadController(TestableController::class);
+
+			$this->createTestRoute('/$param1', 'UnmatchedVariable');
+			$route = $this->findRoute('/hello world');
+
+			$this->expectException(LoadException::class);
+			$controller->instantiateParametersForRoute($route);
 		}
 	}
