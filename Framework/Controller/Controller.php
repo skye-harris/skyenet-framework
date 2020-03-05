@@ -51,18 +51,15 @@
 					$paramName = $reflectionParameter->getName();
 					$paramType = $reflectionParameter->getType();
 
-					if (!array_key_exists($paramName, $route->matchVars) || !$paramType) {
-						$bindVar = $route->matchVars[$paramName] ?? null;
-
-						if (!$bindVar && !$reflectionParameter->allowsNull()) {
-							throw new LoadException("Unable to match variable {$paramName}");
-						}
-
-						$output[] = new ManagedData($bindVar);
-
-						continue;
+					// The controller function has a parameter that is not defined in the route
+					if (!array_key_exists($paramName, $route->matchVars)) {
+						throw new LoadException("Unable to match variable '{$paramName}'");
 					}
 
+					// The parameter can be matched but has no type defined
+					if (!$paramType) {
+						throw new LoadException("Route parameter '{$paramName}' has no type defined");
+					}
 
 					if ($paramType->isBuiltin()) {
 						// built-ins are passed-through directly
@@ -78,7 +75,7 @@
 							} /** @noinspection PhpRedundantCatchClauseInspection */
 							catch (\Skyenet\Model\LoadException $exception) {
 								if (!$reflectionParameter->allowsNull()) {
-									throw new LoadException("Failed to instantiate {$paramClass->getName()} for parameter {$paramName}", null, 0, $exception);
+									throw new LoadException("Failed to instantiate '{$paramClass->getName()}' for parameter '{$paramName}'", null, 0, $exception);
 								}
 
 								$output[] = null;
@@ -87,7 +84,7 @@
 							if (!$reflectionParameter->allowsNull()) {
 								$loadableClass = UrlLoadable::class;
 
-								throw new LoadException("Unable to instantiate class {$paramClass->getName()} for parameter {$paramName}: Object must implement {$loadableClass}");
+								throw new LoadException("Unable to instantiate class '{$paramClass->getName()}' for parameter '{$paramName}': Object must implement '{$loadableClass}'");
 							}
 
 							$output[] = null;
@@ -96,7 +93,7 @@
 
 				}
 			} catch (ReflectionException $e) {
-				throw new LoadException("Failed to load Route method: {$e->getMessage()}", null, 0, $e);
+				throw new LoadException("Failed to load Route method: '{$e->getMessage()}'", null, 0, $e);
 			}
 
 			return $output;
