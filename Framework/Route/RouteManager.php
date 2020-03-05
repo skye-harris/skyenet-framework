@@ -23,19 +23,11 @@
 		private ?array $putRoutes = [];
 		private ?array $delRoutes = [];
 
-		private bool $isFreed = false;
-
-		public function free(): void {
-			$this->getRoutes = $this->postRoutes = $this->putRoutes = $this->delRoutes = null;
-			$this->isFreed = true;
+		public function clearRoutes(): void {
+			$this->getRoutes = $this->postRoutes = $this->putRoutes = $this->delRoutes = [];
 		}
 
 		public function addRoute(int $requestType, ?string $urlPart, string $controllerClass, string $functionName): void {
-			if ($this->isFreed) {
-				// todo: throw on use after free
-				return;
-			}
-
 			$route = new Route($urlPart, $controllerClass, $functionName);
 
 			switch ($requestType) {
@@ -63,11 +55,6 @@
 		 * @return Route|null
 		 */
 		public function findRoute(string $requestType, array $requestParts): ?Route {
-			if ($this->isFreed) {
-				// todo: throw on use after free
-				return null;
-			}
-
 			switch ($requestType) {
 				case 'POST':
 					$routeArray = $this->postRoutes;

@@ -148,7 +148,7 @@
 			}
 
 			// free memory used to hold routes
-			$routes->free();
+			$routes->clearRoutes();
 
 			// Run the page controller.
 
