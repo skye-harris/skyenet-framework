@@ -9,6 +9,7 @@
 
 	use PHPUnit\Framework\TestCase;
 	use Skyenet\Database\MySQL\Connection;
+	use Skyenet\Route\RouteManager;
 
 	abstract class UnitTest extends TestCase {
 		protected function setUp(): void {
@@ -19,5 +20,7 @@
 		protected function tearDown(): void {
 			$sql = Connection::getInstance();
 			$sql->rollbackTransaction();
+
+			RouteManager::getInstance()->clearRoutes();
 		}
 	}
