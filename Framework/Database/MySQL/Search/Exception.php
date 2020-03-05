@@ -9,4 +9,5 @@
 	namespace Skyenet\Database\MySQL\Search;
 
 
-	class Exception extends \Skyenet\Database\MySQL\Exception {}
+	class Exception extends \Skyenet\Database\MySQL\Exception {
+	}

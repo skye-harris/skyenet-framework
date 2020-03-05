@@ -19,8 +19,7 @@
 			if (self::IsDeveloper()) {
 				if ($content instanceof ManagedData) {
 					print_r($content->rawValue());
-				}
-				else {
+				} else {
 					print_r($content);
 				}
 
@@ -70,7 +69,7 @@
 		 * @return string
 		 * @throws Exception
 		 */
-		public static function GeneratePasswordSalt():string {
+		public static function GeneratePasswordSalt(): string {
 			return self::GenerateRandomBytes(32);
 		}
 
@@ -80,7 +79,7 @@
 		 * @throws Exception
 		 */
 		public static function HashPassword(string $password): string {
-			$result = password_hash($password,PASSWORD_BCRYPT);
+			$result = password_hash($password, PASSWORD_BCRYPT);
 
 			if ($result === FALSE) {
 				throw new Exception('HashPassword failed - investigate!');
@@ -129,7 +128,7 @@
 			}
 
 			if (urldecode($headers['Csrf_Token']) !== $_SESSION['CSRF_TOKEN']) {
-				setcookie('CSRF_TOKEN',$_SESSION['CSRF_TOKEN'], 0, '/');
+				setcookie('CSRF_TOKEN', $_SESSION['CSRF_TOKEN'], 0, '/');
 				//skyeserenaharris@gmail.com
 
 				throw new InvalidCsrfTokenException('Client-provided CSRF token does not match the CSRF token within their session data');
@@ -150,7 +149,7 @@
 			//$_SESSION['ORIGINAL_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 			$_SESSION['SESSION_STARTED'] = time();
 
-			setcookie('CSRF_TOKEN',$_SESSION['CSRF_TOKEN'], 0, '/');
+			setcookie('CSRF_TOKEN', $_SESSION['CSRF_TOKEN'], 0, '/');
 			$_SESSION['SESSION_SETUP'] = true;
 		}
 
@@ -175,7 +174,7 @@
 
 		// Generate and return a v4 UUID
 		public static function UUID(bool $withSeparators = true): string {
-			$uuid = UUID::mint(1,Skyenet::$CONFIG['SERVER_MAC']);
+			$uuid = UUID::mint(1, Skyenet::$CONFIG['SERVER_MAC']);
 
 			if (!$withSeparators) {
 				$uuid = str_replace('-', '', $uuid);

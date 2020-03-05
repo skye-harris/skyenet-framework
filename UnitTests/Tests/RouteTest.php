@@ -15,11 +15,11 @@
 		public function testFindRoute(): void {
 			$routeManager = RouteManager::getInstance();
 
-			$routeManager->addRoute(RouteManager::GET, '/hello', '','Route 1');
-			$routeManager->addRoute(RouteManager::GET, '/hello/world', '','Route 2');
-			$routeManager->addRoute(RouteManager::POST, '/hello/world', '','Route 3');
+			$routeManager->addRoute(RouteManager::GET, '/hello', '', 'Route 1');
+			$routeManager->addRoute(RouteManager::GET, '/hello/world', '', 'Route 2');
+			$routeManager->addRoute(RouteManager::POST, '/hello/world', '', 'Route 3');
 
-			$route = $routeManager->findRoute('GET',['hello','world']);
+			$route = $routeManager->findRoute('GET', ['hello', 'world']);
 
 			$this->assertEquals('Route 2', $route->functionName);
 		}

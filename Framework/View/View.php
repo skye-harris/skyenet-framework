@@ -27,7 +27,8 @@
 		 * @throws Exception
 		 */
 		public function __construct(string $viewFileName) {
-			$rootPath = Skyenet::getInstance()->rootPath();
+			$rootPath = Skyenet::getInstance()
+							   ->rootPath();
 
 			// Test if the path is relative to our rootPath
 			$filePath = "{$rootPath}/{$viewFileName}.html";

@@ -24,7 +24,7 @@
 
 		}
 
-		public function UnmatchedVariable(int $param1, int $param2):void {
+		public function UnmatchedVariable(int $param1, int $param2): void {
 
 		}
 	}

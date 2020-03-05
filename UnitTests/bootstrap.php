@@ -12,18 +12,19 @@
 	use Exception;
 	use Skyenet\Skyenet;
 
-	require_once __DIR__.'/../Framework/Skyenet.php';
+	require_once __DIR__ . '/../Framework/Skyenet.php';
 
-	Skyenet::getInstance()->initFramework();
+	Skyenet::getInstance()
+		   ->initFramework();
 
-	array_map(static function($input) {
+	array_map(static function ($input) {
 		if (stripos($input, '.php') !== FALSE) {
 			try {
 				/** @noinspection PhpIncludeInspection */
 				require_once __DIR__ . "/Database/{$input}";
 			} catch (Exception $exception) {
-				echo $exception->getMessage().PHP_EOL;
+				echo $exception->getMessage() . PHP_EOL;
 
 			}
 		}
-	}, scandir(__DIR__.'/Database'));
+	}, scandir(__DIR__ . '/Database'));

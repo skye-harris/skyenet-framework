@@ -10,4 +10,5 @@
 
 	use Skyenet\Exception;
 
-	class LoadException extends Exception {}
+	class LoadException extends Exception {
+	}

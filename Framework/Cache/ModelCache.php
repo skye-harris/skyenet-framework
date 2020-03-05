@@ -1,4 +1,5 @@
 <?php
+
 	namespace Skyenet\Cache;
 
 	use Skyenet\ManagedData;
@@ -11,7 +12,6 @@
 	 * Date: 5/10/2019
 	 * Time: 10:22 am
 	 */
-
 	class ModelCache {
 		protected static array $_weakReferenceCache = [];
 

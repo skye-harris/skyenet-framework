@@ -5,6 +5,7 @@
 	 * Date: 29/02/2020
 	 * Time: 4:17 pm
 	 */
+
 	namespace UnitTests;
 
 	use PHPUnit\Framework\TestCase;
@@ -21,6 +22,7 @@
 			$sql = Connection::getInstance();
 			$sql->rollbackTransaction();
 
-			RouteManager::getInstance()->clearRoutes();
+			RouteManager::getInstance()
+						->clearRoutes();
 		}
 	}

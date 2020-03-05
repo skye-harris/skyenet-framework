@@ -15,6 +15,6 @@
 	$table->uuid('uuid', null, false, Column::FLAG_PRI_KEY);
 	$table->varchar('data');
 	$table->uuid('testModelUuid');
-	$table->index('testModelIndex','testModelUuid');
+	$table->index('testModelIndex', 'testModelUuid');
 
 	$table->create();

@@ -32,7 +32,7 @@
 		 * Event constructor.
 		 *
 		 * @param String $eventName
-		 * @param mixed	 $eventSource The object broadcasting the event
+		 * @param mixed  $eventSource The object broadcasting the event
 		 * @param mixed  $eventData Event data
 		 * @param bool   $isCancellable Is this event notifying of something about to happen that we can cancel?
 		 */

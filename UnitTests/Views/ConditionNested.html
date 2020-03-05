@@ -1,13 +1,13 @@
 @if ($x == 1)
-	@if ($y == 1)
-		<span>X AND Y == 1</span>
-	@else
-		<span>X == 1 BUT NOT Y</span>
-	@endif
+@if ($y == 1)
+<span>X AND Y == 1</span>
 @else
-	@if ($y == 1)
-		<span>Y == 1 BUT NOT X</span>
-	@else
-		<span>NEITHER == 1@if ($z) but now Z exists@endif</span>
-	@endif
+<span>X == 1 BUT NOT Y</span>
+@endif
+@else
+@if ($y == 1)
+<span>Y == 1 BUT NOT X</span>
+@else
+<span>NEITHER == 1@if ($z) but now Z exists@endif</span>
+@endif
 @endif

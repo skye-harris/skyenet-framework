@@ -169,7 +169,7 @@
 			}
 		}
 
-		protected function fetchRow():void {
+		protected function fetchRow(): void {
 			$this->currentRow = $this->sqlResult->fetch_assoc();
 			$this->currentSearchRelevancyScore = $this->currentRow ? (float)($this->currentRow['searchRelevanceScore'] ?? 0) : 0;
 		}

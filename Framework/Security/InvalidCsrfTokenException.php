@@ -8,4 +8,5 @@
 
 	namespace Skyenet\Security;
 
-	class InvalidCsrfTokenException extends Exception {}
+	class InvalidCsrfTokenException extends Exception {
+	}

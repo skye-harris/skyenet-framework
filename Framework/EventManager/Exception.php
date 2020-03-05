@@ -8,4 +8,5 @@
 
 	namespace Skyenet\EventManager;
 
-	class Exception extends \Skyenet\Exception {}
+	class Exception extends \Skyenet\Exception {
+	}

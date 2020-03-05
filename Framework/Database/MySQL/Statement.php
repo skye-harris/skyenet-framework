@@ -67,17 +67,13 @@
 
 				if (is_string($p)) {
 					$typeString .= 's';
-				}
-				else if (is_int($p)) {
+				} else if (is_int($p)) {
 					$typeString .= 'i';
-				}
-				else if (is_float($p)) {
+				} else if (is_float($p)) {
 					$typeString .= 'd';
-				}
-				else if ($p instanceof ManagedData) {
+				} else if ($p instanceof ManagedData) {
 					$params[$i--] = $p->rawValue();
-				}
-				else {
+				} else {
 					$typeString .= 'b';
 				}
 			}

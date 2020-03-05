@@ -13,8 +13,8 @@
 		/**
 		 * Return an array of event names that this plugin will listen for
 		 *
-		 * @example return [\Model\Crescent\Invoice\Invoice::EVENT_INVOICE_SAVED];
 		 * @return array
+		 * @example return [\Model\Crescent\Invoice\Invoice::EVENT_INVOICE_SAVED];
 		 */
 		public function registerEvents(): array;
 

@@ -21,7 +21,6 @@
 	 * @property ManagedData name
 	 * @property ManagedData value
 	 */
-
 	class ModelData extends Model {
 		public const EVENT_PRE_SAVE = 'MODEL_DATA:PRE_SAVE';
 		public const EVENT_POST_SAVE = 'MODEL_DATA:POST_SAVE';
@@ -56,7 +55,7 @@
 
 				/** @noinspection SqlResolve */
 				$res = $sql->prepareStatement("SELECT AES_DECRYPT(`value`, UNHEX(SHA2(?,512))) AS `value` FROM `{$tableName}` WHERE `uuid`=UNHEX(?) AND `name`=? LIMIT 1")
-						   ->bindParams($passPhrase,$objectModel->getUuid(), $key)
+						   ->bindParams($passPhrase, $objectModel->getUuid(), $key)
 						   ->execute();
 
 				if ($row = $res->fetch_assoc()) {

@@ -13,7 +13,7 @@
 		protected $requiresClosingTag = true;
 
 		public function setRows(int $rows): self {
-			$this->setAttribute('rows',$rows);
+			$this->setAttribute('rows', $rows);
 
 			return $this;
 		}

@@ -169,7 +169,7 @@
 				}
 
 				$namespaces = ['Console', 'App', 'UnitTests', 'CommandLine'];
-				$searchPaths = [$self->rootPath(), __DIR__.'/..'];
+				$searchPaths = [$self->rootPath(), __DIR__ . '/..'];
 
 				$classPath = str_replace('\\', '/', $class);
 				$primaryNamespace = substr($classPath, 0, strpos($classPath, '/'));

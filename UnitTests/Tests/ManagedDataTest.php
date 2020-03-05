@@ -13,7 +13,7 @@
 	use UnitTests\UnitTest;
 
 	class ManagedDataTest extends UnitTest {
-		public function testHtmlContent():void {
+		public function testHtmlContent(): void {
 			$html = '<script>alert("hello world");</script>';
 			$encodedHtml = Security::HTMLEntities($html);
 
@@ -21,27 +21,27 @@
 
 			$this->assertEquals($html, $managedData->rawValue());
 			$this->assertEquals($encodedHtml, $managedData->htmlSafe());
-			$this->assertEquals($encodedHtml, (string)$managedData);	// __toString
+			$this->assertEquals($encodedHtml, (string)$managedData);    // __toString
 		}
 
-		public function testComparisons():void {
+		public function testComparisons(): void {
 			$testValue = 5;
 			$managedData = new ManagedData($testValue);
 
-			$this->assertTrue($managedData->lessThan($testValue+1));
+			$this->assertTrue($managedData->lessThan($testValue + 1));
 			$this->assertFalse($managedData->lessThan($testValue));
-			$this->assertTrue($managedData->greaterThan($testValue-1));
+			$this->assertTrue($managedData->greaterThan($testValue - 1));
 			$this->assertFalse($managedData->greaterThan($testValue));
 
 			$this->assertTrue($managedData->lessThanOrEqual($testValue));
-			$this->assertTrue($managedData->lessThanOrEqual($testValue-1));
-			$this->assertFalse($managedData->lessThanOrEqual($testValue+1));
+			$this->assertTrue($managedData->lessThanOrEqual($testValue - 1));
+			$this->assertFalse($managedData->lessThanOrEqual($testValue + 1));
 
 			$this->assertTrue($managedData->greaterThanOrEqual($testValue));
-			$this->assertTrue($managedData->greaterThanOrEqual($testValue+1));
-			$this->assertFalse($managedData->greaterThanOrEqual($testValue-1));
+			$this->assertTrue($managedData->greaterThanOrEqual($testValue + 1));
+			$this->assertFalse($managedData->greaterThanOrEqual($testValue - 1));
 
 			$this->assertTrue($managedData->equals($testValue));
-			$this->assertFalse($managedData->equals($testValue+1));
+			$this->assertFalse($managedData->equals($testValue + 1));
 		}
 	}

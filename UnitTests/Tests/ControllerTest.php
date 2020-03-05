@@ -26,7 +26,7 @@
 		private function findRoute(string $path): ?Route {
 			$routeManager = RouteManager::getInstance();
 
-			return $routeManager->findRoute(RouteManager::GET, array_values(array_filter(explode('/',$path))));
+			return $routeManager->findRoute(RouteManager::GET, array_values(array_filter(explode('/', $path))));
 		}
 
 		public function testInstantiateInbuiltRouteParameters(): void {
@@ -36,7 +36,7 @@
 
 			$route = $this->findRoute('/int/25');
 			$params = $controller->instantiateParametersForRoute($route);
-			$this->assertEquals(25,$params[0]);
+			$this->assertEquals(25, $params[0]);
 		}
 
 		public function testInstantiateUrlLoadableRouteParameters(): void {
@@ -56,7 +56,7 @@
 
 			$this->assertIsObject($params[0]);
 			$this->assertSame(get_class($params[0]), TestModel::class);
-			$this->assertEquals($modelUuid,$params[0]->getUuid());
+			$this->assertEquals($modelUuid, $params[0]->getUuid());
 		}
 
 		public function testParameterWithoutTypeDefinition(): void {

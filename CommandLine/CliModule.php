@@ -13,7 +13,7 @@
 
 			do {
 				$res = strtolower(readline('Execute? [yes/no]: '));
-			} while (!in_array($res,['yes','no','y','n'], true));
+			} while (!in_array($res, ['yes', 'no', 'y', 'n'], true));
 
 			if ($res === 'yes' || $res === 'y') {
 				echo 'Executing shell command...' . PHP_EOL;

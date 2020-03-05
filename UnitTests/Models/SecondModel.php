@@ -25,7 +25,6 @@
 	 * @method static SecondModelIterator LoadEx(?string $whereString = null, ?array $whereVariables = null, ?string $orderBy = null, ?int $limit = null)
 	 * @method static SecondModel LoadOne(?string $whereString = null, ?array $whereVariables = null, ?string $orderBy = null)
 	 */
-
 	class SecondModel extends Model {
 		public const EVENT_PRE_SAVE = 'SECOND_MODEL:PRE_SAVE';
 		public const EVENT_POST_SAVE = 'SECOND_MODEL:POST_SAVE';

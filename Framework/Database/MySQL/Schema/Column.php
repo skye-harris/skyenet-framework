@@ -78,7 +78,7 @@
 			self::TYPE_MEDIUMBLOB => 'MEDIUMBLOB',
 			self::TYPE_BLOB => 'BLOB',
 		];
-		
+
 		public const MAP_NAMES_TO_TYPES = [
 			'TINYINT' => self::TYPE_TINYINT,
 			'SMALLINT' => self::TYPE_SMALLINT,

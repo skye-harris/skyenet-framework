@@ -33,7 +33,8 @@
 
 		public function __toString(): string {
 			header('Content-Type: text/json');
-			Skyenet::getInstance()->setResponseCode($this->responseCode);
+			Skyenet::getInstance()
+				   ->setResponseCode($this->responseCode);
 
 			// provide a default error message if we are output with no message set and not marked as successful
 			if ($this->message === null && !$this->success) {

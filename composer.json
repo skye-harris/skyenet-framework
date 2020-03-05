@@ -2,7 +2,13 @@
   "name": "skyeharris/skyenet",
   "description": "Skyenet PHP Framework",
   "type": "library",
-  "keywords": ["framework","database","validation","mvc","templating"],
+  "keywords": [
+    "framework",
+    "database",
+    "validation",
+    "mvc",
+    "templating"
+  ],
   "homepage": "https://skyeharris.dev/",
   "license": "todo",
   "authors": [
@@ -12,7 +18,6 @@
       "homepage": "https://skyeharris.dev"
     }
   ],
-
   "require": {
     "php": ">=7.4",
     "jkingweb/druuid": "3.0.0",
@@ -22,8 +27,7 @@
     "ext-openssl": "*",
     "ext-mysqli": "*",
     "phpunit/phpunit": "*"
-  }
-  ,
+  },
   "require-dev": {
     "roave/security-advisories": "dev-master"
   },

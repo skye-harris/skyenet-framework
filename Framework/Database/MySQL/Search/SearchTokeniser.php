@@ -107,8 +107,7 @@
 
 							if ($currToken->inQuote) {
 								$tok->isCloseQuote = true;
-							}
-							else {
+							} else {
 								$tok->isOpenQuote = true;
 							}
 

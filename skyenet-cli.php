@@ -6,7 +6,7 @@
 	 * Time: 4:39 pm
 	 */
 
-	$vendorPaths = ['/vendor','/../../'];
+	$vendorPaths = ['/vendor', '/../../'];
 	foreach ($vendorPaths AS $vendorPath) {
 		$vendorFile = __DIR__ . "{$vendorPath}/autoload.php";
 

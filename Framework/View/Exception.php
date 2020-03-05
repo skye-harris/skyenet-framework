@@ -8,4 +8,5 @@
 
 	namespace Skyenet\View;
 
-	class Exception extends \Skyenet\Exception {}
+	class Exception extends \Skyenet\Exception {
+	}

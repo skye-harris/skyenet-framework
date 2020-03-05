@@ -1,4 +1,5 @@
 <?php
+
 	namespace Skyenet\Html;
 
 	use Skyenet\ManagedData;
@@ -10,7 +11,6 @@
 	 * Date: 7/09/2019
 	 * Time: 5:36 pm
 	 */
-
 	class HtmlTag {
 		protected string $tagName = 'html';
 		protected $requiresClosingTag = true;
@@ -51,7 +51,7 @@
 
 
 		/**
-		 * @param string $key
+		 * @param string             $key
 		 * @param ManagedData|string $value
 		 * @return $this
 		 */
@@ -109,7 +109,7 @@
 				$tagOut[] = "</{$this->tagName}";
 			}
 
-			return '<'.implode(' ',$tagOut).'>';
+			return '<' . implode(' ', $tagOut) . '>';
 		}
 
 		public function __toString(): string {

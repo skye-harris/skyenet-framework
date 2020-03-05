@@ -1,6 +1,7 @@
 <?php
+
 	namespace CommandLine;
-	
+
 	use Skyenet\Controller\Controller;
 
 	/**
@@ -9,18 +10,17 @@
 	 * Date: 22/02/2020
 	 * Time: 4:18 pm
 	 */
-
 	class CliController extends Controller {
 		protected array $availableModules = [
 		];
 
 		protected function discoverModules(): void {
-			$allFiles = scandir(__DIR__.'/Modules');
-			$allFiles = array_filter($allFiles, static function($value) {
+			$allFiles = scandir(__DIR__ . '/Modules');
+			$allFiles = array_filter($allFiles, static function ($value) {
 				return stripos($value, '.php') !== false && $value !== 'CliModule.php';
 			});
 
-			foreach  ($allFiles AS $filename) {
+			foreach ($allFiles AS $filename) {
 				$class = substr($filename, 0, stripos($filename, '.php'));
 				$className = "CommandLine\\Modules\\{$class}";
 

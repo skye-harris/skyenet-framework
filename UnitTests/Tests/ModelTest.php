@@ -20,7 +20,7 @@
 			$modelFields = array_merge([
 				'firstName' => 'Hello',
 				'lastName' => 'World'
-			],$fields);
+			], $fields);
 
 			$model = new TestModel($modelFields);
 			$model->save();
@@ -32,7 +32,7 @@
 			$modelFields = array_merge([
 				'firstName' => 'Hello',
 				'lastName' => 'World'
-			],$fields);
+			], $fields);
 
 			$model = new SecondModel($modelFields);
 			$model->save();
@@ -87,9 +87,12 @@
 
 		public function testModelIterator(): void {
 			$models = [
-				$this->createTestModel()->getUuid(),
-				$this->createTestModel()->getUuid(),
-				$this->createTestModel()->getUuid(),
+				$this->createTestModel()
+					 ->getUuid(),
+				$this->createTestModel()
+					 ->getUuid(),
+				$this->createTestModel()
+					 ->getUuid(),
 			];
 
 			$iteratorModels = TestModel::LoadEx();
@@ -121,8 +124,8 @@
 			$relationCount = 3;
 
 			/** @var TestModel $model */
-			foreach ([$model1,$model2] AS $model) {
-				for ($i=0;$i<$relationCount;$i++) {
+			foreach ([$model1, $model2] AS $model) {
+				for ($i = 0; $i < $relationCount; $i++) {
 					$this->createSecondModel([
 						'data' => "{$model->firstName} Relation",
 						'testModelUuid' => $model->getUuid(true)
@@ -131,7 +134,7 @@
 			}
 
 			/** @var TestModel $model */
-			foreach ([$model1,$model2] AS $model) {
+			foreach ([$model1, $model2] AS $model) {
 				$relations = $model->secondModels();
 				$this->assertCount($relationCount, $relations);
 

@@ -15,7 +15,6 @@
 	use Skyenet\EventManager\Event;
 	use Skyenet\EventManager\EventManager;
 	use Skyenet\Http\UrlLoadable;
-	use Skyenet\ManagedData;
 	use Skyenet\Route\Route;
 	use Skyenet\Skyenet;
 
