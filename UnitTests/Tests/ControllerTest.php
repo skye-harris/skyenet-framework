@@ -69,7 +69,7 @@
 			$controller->instantiateParametersForRoute($route);
 		}
 
-		public function testUnmatchedVariable(): void {
+		public function testUnmatchedParameters(): void {
 			$controller = Controller::LoadController(TestableController::class);
 
 			$this->createTestRoute('/$param1', 'UnmatchedVariable');
