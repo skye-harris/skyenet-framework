@@ -1,5 +1,5 @@
 XDEBUG_IP=192.168.1.101
-XDEBUG_IDE_KEY=PHPSTORM
+XDEBUG_IDE_KEY=SKYENET_FRAMEWORK
 XDEBUG_FILE=/usr/lib64/php/modules/xdebug.so
 XDEBUG_OPTIONS=-dzend_extension=$(XDEBUG_FILE) \
 	-dxdebug.remote_enable=1 \
@@ -12,4 +12,10 @@ PHPUNIT_FILE=vendor/phpunit/phpunit/phpunit
 FRAMEWORK_BOOTSTRAP= --bootstrap ./UnitTests/bootstrap.php
 
 test:
-	php $(XDEBUG_OPTIONS) $(PHPUNIT_FILE) $(FRAMEWORK_BOOTSTRAP) --testdox --colors=always --verbose ./UnitTests/Tests
+	php $(PHP_ARGS) $(PHPUNIT_FILE) $(FRAMEWORK_BOOTSTRAP) --testdox --colors=always --verbose --testdox-text TestResults.txt ./UnitTests/Tests
+
+test-debug:
+	make test PHP_ARGS="$(XDEBUG_OPTIONS)"
+
+cli-debug:
+	php $(XDEBUG_OPTIONS) skyenet-cli.php

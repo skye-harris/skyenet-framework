@@ -105,10 +105,11 @@
 		}
 
 		/**
+		 * @param string|null $configFile
 		 * @throws Exception
 		 */
-		protected function loadConfig(): void {
-			$configFile = "{$this->rootPath()}/config.json";
+		protected function loadConfig(?string $configFile = null): void {
+			$configFile = $configFile ?? "{$this->rootPath()}/config.json";
 
 			if (!file_exists($configFile)) {
 				throw new Exception('config.json does not exist');
@@ -195,30 +196,33 @@
 		}
 
 		/**
+		 * @param string|null $configFile
 		 * @throws Exception
 		 */
-		protected function init(): void {
+		protected function init(?string $configFile = null): void {
 			ini_set('html_errors', false);
 
 			ob_start();
 			@set_exception_handler(array($this, 'exception_handler'));
 
-			$this->loadConfig();
+			$this->loadConfig($configFile);
 			$this->initAutoloader();
 		}
 
 		/**
+		 * @param string|null $configFile
 		 * @throws Exception
 		 */
-		public function initFramework(): void {
-			$this->init();
+		public function initFramework(?string $configFile = null): void {
+			$this->init($configFile);
 		}
 
 		/**
+		 * @param string|null $configFile
 		 * @throws Exception
 		 */
-		public function start(): void {
-			$this->init();
+		public function start(?string $configFile = null): void {
+			$this->init($configFile);
 
 			// Attempt to instantiate the requested pages controller
 			try {

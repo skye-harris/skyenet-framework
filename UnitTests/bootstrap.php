@@ -15,7 +15,7 @@
 	require_once __DIR__ . '/../Framework/Skyenet.php';
 
 	Skyenet::getInstance()
-		   ->initFramework();
+		   ->initFramework(__DIR__.'/config.json');
 
 	array_map(static function ($input) {
 		if (stripos($input, '.php') !== FALSE) {
