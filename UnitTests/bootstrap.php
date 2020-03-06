@@ -14,8 +14,10 @@
 
 	require_once __DIR__ . '/../Framework/Skyenet.php';
 
+	$config = getenv('SKYENET_CONFIG_FILE');
+
 	Skyenet::getInstance()
-		   ->initFramework(__DIR__.'/config.json');
+		   ->initFramework($config);
 
 	array_map(static function ($input) {
 		if (stripos($input, '.php') !== FALSE) {

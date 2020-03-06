@@ -29,3 +29,5 @@ jobs:
 
       - name: Run test suite
         run: composer run-script test
+        env:
+          SKYENET_CONFIG_FILE: UnitTests/github_actions.json
