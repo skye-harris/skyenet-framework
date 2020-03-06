@@ -13,9 +13,10 @@ jobs:
       mysql:
         image: mysql:5.7
         env:
-          MYSQL_DATABASE: skyenet-test
           MYSQL_USER: user
           MYSQL_PASSWORD: password
+          MYSQL_DATABASE: skyenet-test
+          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
