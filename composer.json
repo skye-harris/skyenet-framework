@@ -35,5 +35,8 @@
     "classmap": [
       "Framework/"
     ]
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit --bootstrap ./UnitTests/bootstrap.php --testdox --verbose ./UnitTests/Tests"
   }
 }
