@@ -15,6 +15,9 @@
 	require_once __DIR__ . '/../Framework/Skyenet.php';
 
 	$config = getenv('SKYENET_CONFIG_FILE');
+	if (!file_exists($config)) {
+		$config = null;
+	}
 
 	Skyenet::getInstance()
 		   ->initFramework($config);
