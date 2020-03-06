@@ -18,14 +18,16 @@ jobs:
           MYSQL_DATABASE: skyenet-test
           MYSQL_ROOT_PASSWORD: password
         ports:
-          - 3306
+          - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Verify MySQL connection from container
-        run: mysql --host mysql -uroot -ppassword -e "SHOW DATABASES"
+        run: |
+          sudo apt-get install -y mysql-client
+          mysql --host 127.0.0.1 -uroot -ppassword -e "SHOW DATABASES"
 
       - name: Validate composer.json and composer.lock
         run: composer validate
