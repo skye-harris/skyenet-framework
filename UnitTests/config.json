@@ -1,7 +1,7 @@
 {
   "DATABASE_HOST": "localhost",
   "DATABASE_DEFAULT_NAME": "skyenet-test",
-  "DATABASE_USER": "skyenet",
+  "DATABASE_USER": "root",
   "DATABASE_ENCRYPTION_PASSPHRASE": "86b227df7381a19dbc94e54bad8aabcf749540409db05afd2fc8f921945293c7",
   "SITE_TITLE": "Skyenet",
   "SERVER_MAC": "AB:CD:EF:01:23:45",
