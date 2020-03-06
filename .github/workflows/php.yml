@@ -24,6 +24,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Verify MySQL connection from container
+        run: |
+          apt-get update
+          apt-get install -y mysql-client
+          mysql --host mysql -uroot -ppassword -e "SHOW DATABASES"
+
       - name: Validate composer.json and composer.lock
         run: composer validate
 
