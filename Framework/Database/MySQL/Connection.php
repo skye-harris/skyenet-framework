@@ -37,10 +37,11 @@
 			$databaseHost = Skyenet::$CONFIG['DATABASE_HOST'];
 			$databaseUser = Skyenet::$CONFIG['DATABASE_USER'];
 			$databasePass = Skyenet::$CONFIG['DATABASE_PASSWORD'];
+			$databasePort = Skyenet::$CONFIG['DATABASE_PORT'];
 
 			$this->setDatabase($databaseName ?? $defaultDatabase);
 
-			@$this->mysqli = new mysqli($databaseHost, $databaseUser, $databasePass, $this->dbName);
+			@$this->mysqli = new mysqli($databaseHost, $databaseUser, $databasePass, $this->dbName, $databasePort);
 			if ($this->mysqli->connect_errno) {
 				throw new ConnectException("Connection to database failed with error {$this->mysqli->connect_errno}: {$this->mysqli->connect_error}");
 			}

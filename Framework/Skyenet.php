@@ -31,6 +31,7 @@
 			'DEFAULT_DATABASE_NAME' => null,
 			'DATABASE_HOST' => null,
 			'DATABASE_USER' => null,
+			'DATABASE_PORT' => 3306,
 			'DATABASE_PASSWORD' => null,
 			'DEVELOPER_MODE' => true,
 		];
