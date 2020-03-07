@@ -2,9 +2,9 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ GithubActions ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ GithubActions ]
+    branches: [ master, develop ]
 
 jobs:
   test:
@@ -15,7 +15,7 @@ jobs:
         env:
           MYSQL_USER: user
           MYSQL_PASSWORD: password
-          MYSQL_DATABASE: skyenet-test
+          MYSQL_DATABASE: skyenet
           MYSQL_ROOT_PASSWORD: password
         ports:
           - 13306:3306
