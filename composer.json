@@ -37,6 +37,6 @@
     ]
   },
   "scripts": {
-    "Unit Tests": "vendor/bin/phpunit --bootstrap ./UnitTests/bootstrap.php --testdox --verbose ./UnitTests/Tests"
+    "Unit Tests": "vendor/bin/phpunit --bootstrap ./UnitTests/bootstrap.php --colors=always --testdox --verbose ./UnitTests/Tests"
   }
 }
