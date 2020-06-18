@@ -9,6 +9,7 @@
 	use Phar;
 	use Skyenet\Ajax\AjaxResponse;
 	use Skyenet\Controller\Controller;
+	use Skyenet\Controller\FourOhFourController;
 	use Skyenet\Controller\LoadException;
 	use Skyenet\EventManager\Event;
 	use Skyenet\EventManager\EventManager;
